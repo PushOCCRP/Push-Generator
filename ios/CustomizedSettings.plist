@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>cms_base_url</key>
+	<string>https://www.occrp.org</string>
+	<key>hockey_app_id</key>
+	<string>5e1c7f0b67b4472c8590cb292a77ba25</string>
+	<key>push_url_prod</key>
+	<string>https://push-occrp.herokuapp.com</string>
+	<key>push_url_dev</key>
+	<string>https://push-occrp.herokuapp.com</string>
+	<key>push_url</key>
+	<string>https://push-occrp.herokuapp.com</string>
+</dict>
+</plist>
