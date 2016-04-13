@@ -138,7 +138,7 @@ class Generator
 	end
 
 	def self.verify_credentials_format credentials
-		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'infobip-application-id', 'infobip-application-secret', 'play-store-app-number']
+		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'infobip-application-id', 'infobip-application-secret', 'play-store-app-number', 'fabric-key']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, credentials)
 		end
@@ -175,6 +175,10 @@ class Generator
 		template = self.loadTemplate('iOS-Settings')
 		rendered_template = self.generateSettingsFile settings, template
 		saveFile 'ios/CustomizedSettings.plist', rendered_template
+
+		template = self.loadTemplate('iOS-Info')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'ios/Info.plist', rendered_template
 	end
 
 	def self.generateSettingsFile settings, template
@@ -193,6 +197,8 @@ class Generator
 			content = self.load_file('ios_secrets_template.erb', 'ios_secrets_template.erb')
 		when 'iOS-Settings'
 			content = self.load_file('ios_settings_template.erb', 'ios_settings_template.erb')
+		when 'iOS-Info'
+			content = self.load_file('ios_info_template.erb', 'ios_info_template.erb')
 		when 'android'
 			content = self.load_file('android_template.erb', 'android_template.erb')
 		end
@@ -231,6 +237,7 @@ end
 keys_final_location = ios_project_path + "/" + "Push"
 FileUtils.cp("./ios/SecretKeys.plist", keys_final_location)
 FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
+FileUtils.cp("./ios/Info.plist", keys_final_location)
 
 Dir.chdir(ios_project_path) do
 	p exec('fastlane gen_test')
