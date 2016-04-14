@@ -6,6 +6,7 @@ require 'byebug'
 require 'yaml'
 require 'erb'
 require 'fileutils'
+require 'mini_magick'
 
 Options = Struct.new(:file_name)
 
@@ -217,6 +218,43 @@ class Generator
 	end
 end
 
+class ImageProcessor
+	def self.process
+		image = MiniMagick::Image.open("images/logo.png")
+		image.resize "512x512"
+		image.format "png"
+		image.write "images/images-generated/logo-512.png"
+
+		image.resize "540x540"
+		image.format "png"
+		image.write "images/images-generated/icon@3x.png"
+
+		image.resize "360x360"
+		image.format "png"
+		image.write "images/images-generated/icon@2x.png"
+
+		image.resize "76x76"
+		image.format "png"
+		image.write "images/images-generated/icon@1x.png"
+
+		image.resize "167x167"
+		image.format "png"
+		image.write "images/images-generated/icon 167x167.png"
+
+		image.resize "152x152"
+		image.format "png"
+		image.write "images/images-generated/icon 152x152.png"
+
+		image.resize "120x120"
+		image.format "png"
+		image.write "images/images-generated/icon 120x120.png"
+
+		image.resize "708x708"
+		image.format "png"
+		image.write "images/images-generated/launch-screen-logo@3x.png"
+	end
+end
+
 def prompt(*args)
     print(*args)
     gets
@@ -238,6 +276,8 @@ keys_final_location = ios_project_path + "/" + "Push"
 FileUtils.cp("./ios/SecretKeys.plist", keys_final_location)
 FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
 FileUtils.cp("./ios/Info.plist", keys_final_location)
+
+ImageProcessor.process
 
 Dir.chdir(ios_project_path) do
 	p exec('fastlane gen_test')
