@@ -55,6 +55,9 @@ class Generator
 #		pp settings
 		#5.) Parse file into iOS format
 		generateiOSSettingsFile settings
+
+		return settings
+
 		#pp generateiOSSettingsFile settings
 		#6.) Parse file into Android format
 		#8.) Run Fastlane for iOS
@@ -101,7 +104,7 @@ class Generator
 		 "navigation-text-color"=>"#000000",
 		 "credentials-file"=>"creds.yml"}
 =end
-		settings_to_verify = ['name', 'short-name', 'languages', 'icon-large', 'navigation-bar-color', 'navigation-text-color']
+		settings_to_verify = ['name', 'short-name', 'languages', 'icon-large', 'icon-navigation-bar', 'navigation-bar-color', 'navigation-text-color']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, settings)
 		end
@@ -219,40 +222,43 @@ class Generator
 end
 
 class ImageProcessor
-	def self.process
-		image = MiniMagick::Image.open("images/logo.png")
-		image.resize "512x512"
-		image.format "png"
-		image.write "images/images-generated/logo-512.png"
-
-		image.resize "540x540"
-		image.format "png"
-		image.write "images/images-generated/icon@3x.png"
-
-		image.resize "360x360"
-		image.format "png"
-		image.write "images/images-generated/icon@2x.png"
-
-		image.resize "76x76"
-		image.format "png"
-		image.write "images/images-generated/icon@1x.png"
-
-		image.resize "167x167"
-		image.format "png"
-		image.write "images/images-generated/icon 167x167.png"
-
-		image.resize "152x152"
-		image.format "png"
-		image.write "images/images-generated/icon 152x152.png"
-
-		image.resize "120x120"
-		image.format "png"
-		image.write "images/images-generated/icon 120x120.png"
-
-		image.resize "708x708"
-		image.format "png"
-		image.write "images/images-generated/launch-screen-logo@3x.png"
+	def self.process_logo image_name, final_location
+		image_sizes = {
+ 		 ["images/images-generated/launch-screen-logo@3x.png"] => "708x708",
+ 		 ["images/images-generated/icon@3x.png","images/images-generated/icon@3x-1.png"] => "540x540",
+ 		 ["images/images-generated/logo-512.png"] => "512x512",
+ 		 ["images/images-generated/icon@2x.png","images/images-generated/icon@2x-1.png","images/images-generated/icon@2x-2.png","images/images-generated/icon@2x-3.png","images/images-generated/icon@2x-4.png","images/images-generated/icon@2x-5.png","images/images-generated/icon@2x-6.png"] => "360x360",
+ 		 ["images/images-generated/icon 167x167.png", "images/images-generated/icon 167x167-1.png", "images/images-generated/icon 167x167-2.png"] => "167x167",
+ 		 ["images/images-generated/icon 152x152.png"] => "152x152",
+ 		 ["images/images-generated/icon 120x120.png"] => "120x120",
+ 		 ["images/images-generated/icon@1x.png", "images/images-generated/icon@1x-1.png", "images/images-generated/icon@1x-2.png"] => "76x76",
+		}
+		process image_sizes, image_name, final_location
 	end
+
+	def self.process_header_icon image_name, final_location
+		image_sizes = {
+ 		 ["images/images-generated/logo@3x.png"] => "132x500",
+ 		 ["images/images-generated/logo@2x.png"] => "88x500",
+ 		 ["images/images-generated/logo@1x.png"] => "44x500",
+		}
+		process image_sizes, image_name, final_location
+	end
+
+	def self.process image_sizes, image_name, final_location
+		image = MiniMagick::Image.open("images/#{image_name}")
+
+		image_sizes.keys.each do |key|
+			key.each do |file_name|
+				image.resize image_sizes[key]
+				image.format "png"
+				image.write file_name
+				FileUtils.cp(file_name, final_location)
+			end
+		end
+
+	end
+
 end
 
 def prompt(*args)
@@ -261,7 +267,7 @@ def prompt(*args)
 end
 
 options = Parser.parse ARGV
-Generator.generate options
+settings = Generator.generate options
 
 p "Current path is: #{Dir.pwd}"
 ios_project_path = prompt "iOS Project Path: "
@@ -277,11 +283,13 @@ FileUtils.cp("./ios/SecretKeys.plist", keys_final_location)
 FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
 FileUtils.cp("./ios/Info.plist", keys_final_location)
 
-ImageProcessor.process
+ImageProcessor.process_logo settings['icon-large'], ios_project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
+ImageProcessor.process_header_icon settings['icon-navigation-bar'], ios_project_path + "/Push"
 
 Dir.chdir(ios_project_path) do
 	p exec('fastlane gen_test')
 end
+
 
 
 
