@@ -1,0 +1,45 @@
+# Push Generator settings - v1.0
+# Template by Christopher Guess OCCRP/ICFJ/Knight
+
+# App Name
+name: "OCCRP"
+# Short app name
+short-name: "OCCRP"
+
+# Languages supported
+# First language is default
+# Throws an error if the language is no supported by Push
+languages: 
+  - "en"
+# Optional: default language
+# Default is first language in langauges list
+default-language: "en"
+
+# Single numbers indicate height
+# Double numbers are height x width (eg 128x300)
+# Files are relative to this file
+# At least 512px tall
+icon-large: "logo-occrp.png"
+# This is optional if you want an alternative design for a smaller icon
+# At least 72px tall
+icon-small: "icon-small.png"
+icon-navigation-bar: "logo-navbar-occrp.png"
+# Optional: Icon background color
+# Android icons can support transparency, iOS does not
+# This is the color that is added behind the icon for iOS
+# If this is not here you can just make the icon non-transparent
+# The default is white
+icon-background-color: "#000000"
+# Optional: Launch screen background color
+# The icon is overlaid on this
+# Default is white
+launch-background-color: "#333333"
+# Navigation bar color
+navigation-bar-color: "#90031F"
+# Navigation bar text color1
+navigation-text-color: "#FFFFFF"
+
+# Credentials file
+# Optional: Assumed to be push-mobile-credentials.yml if not here
+# DON'T CHECK IN THE CREDENTIALS FILE!!!!
+credentials-file: "creds-occrp.yml"

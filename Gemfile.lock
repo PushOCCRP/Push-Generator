@@ -1,0 +1,12 @@
+GEM
+  specs:
+    mini_magick (4.0.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  mini_magick
+
+BUNDLED WITH
+   1.11.2
