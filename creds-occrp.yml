@@ -22,3 +22,5 @@ youtube-access-key: "xxxxxxxxxxxxxxxxx"
 fabric-key: "e8e3bbc2256c70be95a43e59ef78a0e1b312db75"
 # Facebook key
 facebook-key: "148846052145556"
+# Paypal donation URL
+donation-url: "https://www.occrp.org/en/donate"
