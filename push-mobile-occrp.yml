@@ -33,11 +33,16 @@ icon-background-color: "#000000"
 # Optional: Launch screen background color
 # The icon is overlaid on this
 # Default is white
-launch-background-color: "#333333"
+launch-background-color: "#FFFFFF"
 # Navigation bar color
 navigation-bar-color: "#90031F"
 # Navigation bar text color1
 navigation-text-color: "#FFFFFF"
+
+# Default is blank, mostly used for the about text Files
+# for instance: the dault is "about_text-en.html", buf if you are managing multiple orgs
+# name it "about_text-en-ORGNAME.html" and set the suffix to "ORGNAME", the dash is automatic
+suffix: "occrp"
 
 # Credentials file
 # Optional: Assumed to be push-mobile-credentials.yml if not here

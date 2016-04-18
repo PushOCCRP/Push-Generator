@@ -259,6 +259,15 @@ class ImageProcessor
 
 	end
 
+	#Takes hex
+	def self.generateSolidColor color, file_name
+		MiniMagick::Tool::Convert.new do |convert|
+		  convert.merge! ["-size", "1200x1200", "xc:#{color}"]
+		  convert << file_name
+		end
+
+
+	end
 end
 
 def prompt(*args)
@@ -284,7 +293,23 @@ FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
 FileUtils.cp("./ios/Info.plist", keys_final_location)
 
 ImageProcessor.process_logo settings['icon-large'], ios_project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
+ImageProcessor.process_logo settings['icon-large'], ios_project_path + "/Push"
 ImageProcessor.process_header_icon settings['icon-navigation-bar'], ios_project_path + "/Push"
+
+solid_color_image = "images/images-generated/launch-background-color@3x.png"
+ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
+FileUtils.cp(solid_color_image, ios_project_path + "/Push")
+
+suffix = ""
+if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
+	suffix = "-#{settings['suffix']}"
+end
+
+settings['languages'].each do |language|
+	FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", ios_project_path + "/Push/" + "about_text-#{language}.html")
+end
+
+
 
 Dir.chdir(ios_project_path) do
 	p exec('fastlane gen_test')
