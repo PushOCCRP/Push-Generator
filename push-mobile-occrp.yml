@@ -6,6 +6,9 @@ name: "OCCRP"
 # Short app name
 short-name: "OCCRP"
 
+# Note: everytime a file changes you should recreate the pbxproj file
+ios-bundle-identifier: 'com.occrp.push'
+android-bundle-identifier: 'com.push.occrp'
 # Languages supported
 # First language is default
 # Throws an error if the language is no supported by Push
