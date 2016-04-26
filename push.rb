@@ -8,7 +8,7 @@ require 'erb'
 require 'fileutils'
 require 'mini_magick'
 
-Options = Struct.new(:file_name)
+Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode)
 
 class Parser
   def self.parse(options)
@@ -19,6 +19,22 @@ class Parser
 
       opts.on("-fFILE", "--file=FILE", "File name for settings") do |n|
         args.file_name = n
+      end
+
+      opts.on("-p", "--production", "Flag for production push") do
+      	args.production = true
+      end
+
+      opts.on("-s", "--snapshot", "Flag for only making screenshots") do
+      	args.snapshot = true
+      end
+
+      opts.on("-b", "--beta", "Flag for beta push") do
+      	args.beta = true
+      end
+
+      opts.on("-mMODE", "--mode=mode", "Flag for Android (android) or iOS (ios), e.g. -m android") do |n|
+      	args.mode = n
       end
 
       opts.on("-h", "--help", "Prints this help") do
@@ -33,7 +49,8 @@ class Parser
 end
 
 class Generator
-	def self.generate options
+
+	def self.generate options, version_number, build_number, mode
 		#1.) Check if there's a file indicated in the call - DONE
 		#2.) If there's not a file, look for push-mobile.haml - DONE
 		file_content = load_file(options[:file_name], 'push-mobile.yml')
@@ -51,10 +68,20 @@ class Generator
 		if(credentials.nil?)
 			return
 		end
+
 		settings[:credentials] = credentials
+		settings[:build_number] = build_number
+		settings[:version_number] = version_number
 #		pp settings
 		#5.) Parse file into iOS format
-		generateiOSSettingsFile settings
+
+		case mode
+		when :iOS
+			generateiOSSettingsFile settings
+		when :android
+			generateAndroidSettingsFile settings
+		end
+
 
 		return settings
 
@@ -104,7 +131,7 @@ class Generator
 		 "navigation-text-color"=>"#000000",
 		 "credentials-file"=>"creds.yml"}
 =end
-		settings_to_verify = ['name', 'short-name', 'languages', 'icon-large', 'icon-navigation-bar', 'navigation-bar-color', 'navigation-text-color']
+		settings_to_verify = ['name', 'short-name', 'ios-bundle-identifier', 'languages', 'icon-large', 'icon-navigation-bar', 'navigation-bar-color', 'navigation-text-color']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, settings)
 		end
@@ -142,7 +169,7 @@ class Generator
 	end
 
 	def self.verify_credentials_format credentials
-		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'infobip-application-id', 'infobip-application-secret', 'play-store-app-number', 'fabric-key']
+		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'hockey-secret', 'infobip-application-id', 'infobip-application-secret', 'play-store-app-number', 'fabric-key']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, credentials)
 		end
@@ -183,13 +210,55 @@ class Generator
 		template = self.loadTemplate('iOS-Info')
 		rendered_template = self.generateSettingsFile settings, template
 		saveFile 'ios/Info.plist', rendered_template
+
+		template = self.loadTemplate('iOS-PBX')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'ios/project.pbxproj', rendered_template
+
+		template = self.loadTemplate('iOS-Fastfile')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'ios/Fastfile', rendered_template
+
+		template = self.loadTemplate('iOS-Appfile')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'ios/Appfile', rendered_template
+
+		template = self.loadTemplate('iOS-Snapfile')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'ios/Snapfile', rendered_template
+
 	end
+
+	def self.generateAndroidSettingsFile settings
+		template = self.loadTemplate('Android-Safe-Variables')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'android/safe_variables.gradle', rendered_template
+
+		template = self.loadTemplate('Android-Colors')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'android/colors.xml', rendered_template
+
+		template = self.loadTemplate('Android-Manifest')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'android/AndroidManifest.xml', rendered_template
+
+		template = self.loadTemplate('Android-Manifest-Debug')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'android/AndroidManifestDebug.xml', rendered_template
+
+		template = self.loadTemplate('Android-Build-Gradle')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'android/build.gradle', rendered_template
+
+
+	end
+
 
 	def self.generateSettingsFile settings, template
 		b = binding
 		b.local_variable_set :setting, settings
 		@rendered
-    	ERB.new(template, 0, ">", "@rendered").result(b)
+    	ERB.new(template, nil, '%<>-', "@rendered").result(b)
     	
     	return @rendered
 	end
@@ -198,13 +267,30 @@ class Generator
 		content = nil
 		case type
 		when 'iOS-Security'
-			content = self.load_file('ios_secrets_template.erb', 'ios_secrets_template.erb')
+			content = self.load_file('templates/ios/ios_secrets_template.erb', 'templates/ios/ios_secrets_template.erb')
 		when 'iOS-Settings'
-			content = self.load_file('ios_settings_template.erb', 'ios_settings_template.erb')
+			content = self.load_file('templates/ios/ios_settings_template.erb', 'templates/ios/ios_settings_template.erb')
 		when 'iOS-Info'
-			content = self.load_file('ios_info_template.erb', 'ios_info_template.erb')
-		when 'android'
-			content = self.load_file('android_template.erb', 'android_template.erb')
+			content = self.load_file('templates/ios/ios_info_template.erb', 'templates/ios/ios_info_template.erb')
+		when 'iOS-PBX'
+			content = self.load_file('templates/ios/ios_project_pbxproj.erb', 'templates/ios/ios_project_pbxproj.erb')
+		when 'iOS-Fastfile'
+			content = self.load_file('templates/ios/ios_fastfile_template.erb', 'templates/ios/ios_fastfile_template.erb')
+		when 'iOS-Appfile'
+			content = self.load_file('templates/ios/ios_appfile_template.erb', 'templates/ios/ios_appfile_template.erb')
+		when 'iOS-Snapfile'
+			content = self.load_file('templates/ios/ios_snapfile_template.erb', 'templates/ios/ios_snapfile_template.erb')
+
+		when 'Android-Safe-Variables'
+			content = self.load_file('templates/android/android_safe_variable_gradle_template.erb', 'templates/android/android_safe_variable_gradle_template.erb')
+		when 'Android-Colors'
+			content = self.load_file('templates/android/android_colors_xml.erb', 'templates/android/android_colors_xml.erb')
+		when 'Android-Manifest'
+			content = self.load_file('templates/android/android_manifest_xml.erb', 'templates/android/android_manifest_xml.erb')
+		when 'Android-Manifest-Debug'
+			content = self.load_file('templates/android/android_manifest_debug_xml.erb', 'templates/android/android_manifest_debug_xml.erb')
+		when 'Android-Build-Gradle'
+			content = self.load_file('templates/android/android_build_gradle.erb', 'templates/android/android_build_gradle.erb')
 		end
 
 		return content
@@ -219,11 +305,19 @@ class Generator
 			file.puts(content)
 		end
 	end
+
+	def self.setAndroidTitle settings
+		#Set the name of the app in all relevant language files
+		settings[:languages].each do |language|
+			  text = File.read(file_name)
+		end
+	end
 end
 
 class ImageProcessor
 	def self.process_logo image_name, final_location
 		image_sizes = {
+		 ["images/images-generated/app-store-icon.png"] => "1024x1024",
  		 ["images/images-generated/launch-screen-logo@3x.png"] => "708x708",
  		 ["images/images-generated/icon@3x.png","images/images-generated/icon@3x-1.png"] => "540x540",
  		 ["images/images-generated/logo-512.png"] => "512x512",
@@ -265,7 +359,7 @@ class ImageProcessor
 		  convert.merge! ["-size", "1200x1200", "xc:#{color}"]
 		  convert << file_name
 		end
-
+		#continue!!!!
 
 	end
 end
@@ -275,47 +369,154 @@ def prompt(*args)
     gets
 end
 
+def generateIOS options
+	version_number = "1.0"
+	build_number = "1"
+
+	if(options[:production] == true || options[:beta] == true)
+		version_number = prompt "iOS Version number: "
+		build_number = prompt "iOS Build number: "
+	end
+
+	settings = Generator.generate options, version_number.strip!, build_number.strip!, :ios
+
+	p "Current path is: #{Dir.pwd}"
+	project_path = prompt "iOS Project Path: "
+	project_path.strip!
+
+	if(File.exist?(project_path) == false)
+		p "Directory not found."
+		abort
+	end
+
+	keys_final_location = project_path + "/" + "Push"
+	FileUtils.cp("./ios/SecretKeys.plist", keys_final_location)
+	FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
+	FileUtils.cp("./ios/Info.plist", keys_final_location)
+	FileUtils.cp("./ios/project.pbxproj", project_path + "/Push.xcodeproj")
+	FileUtils.cp("./ios/Fastfile", project_path + "/fastlane")
+	FileUtils.cp("./ios/Appfile", project_path + "/fastlane")
+	FileUtils.cp("./ios/Snapfile", project_path + "/fastlane")
+
+	ImageProcessor.process_logo settings['icon-large'], project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
+	ImageProcessor.process_logo settings['icon-large'], project_path + "/Push"
+	ImageProcessor.process_header_icon settings['icon-navigation-bar'], project_path + "/Push"
+
+	solid_color_image = "images/images-generated/launch-background-color@3x.png"
+	ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
+	FileUtils.cp(solid_color_image, project_path + "/Push")
+
+	suffix = ""
+	if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
+		suffix = "-#{settings['suffix']}"
+	end
+
+	settings['languages'].each do |language|
+		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/Push/" + "about_text-#{language}.html")
+	end
+
+
+	Dir.chdir(project_path) do
+		if(options[:snapshot] == true)
+			p exec('snapshot')
+			break
+		end
+		lane = nil
+
+		if(options[:production] == true)
+			lane = "ios deploy"
+		elsif(options[:beta] == true)
+			build_notes = prompt "Build notes?: "
+			lane = "ios beta notes:#{build_notes}"
+		end
+		p exec("fastlane #{lane}")
+	end
+
+end
+
+def generateAndroid options
+	version_number = "1.0"
+	build_number = "1"
+
+	if(options[:production] == true || options[:beta] == true)
+		version_number = prompt "Android Version number: "
+		build_number = prompt "Android Build number: "
+	end
+
+	settings = Generator.generate options, version_number.strip!, build_number.strip!, :android
+	Generator.setAndroidTitle settings
+
+	p "Current path is: #{Dir.pwd}"
+	project_path = prompt "Android Project Path: "
+	project_path.strip!
+
+	if(File.exist?(project_path) == false)
+		p "Directory not found."
+		abort
+	end
+
+	keys_final_location = project_path + "/" + "app"
+	FileUtils.cp("./android/safe_variables.gradle", keys_final_location)
+	FileUtils.cp("./android/colors.xml", keys_final_location + "/src/main/res/values/")
+	FileUtils.cp("./android/AndroidManifest.xml", keys_final_location + "/src/main/")
+	FileUtils.cp("./android/AndroidManifestDebug.xml", keys_final_location + "/src/debug/AndroidManifest.xml")
+	FileUtils.cp("./android/build.gradle", keys_final_location)
+
+=begin
+	FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
+	FileUtils.cp("./ios/Info.plist", keys_final_location)
+	FileUtils.cp("./ios/project.pbxproj", project_path + "/Push.xcodeproj")
+	FileUtils.cp("./ios/Fastfile", project_path + "/fastlane")
+	FileUtils.cp("./ios/Appfile", project_path + "/fastlane")
+	FileUtils.cp("./ios/Snapfile", project_path + "/fastlane")
+
+	ImageProcessor.process_logo settings['icon-large'], project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
+	ImageProcessor.process_logo settings['icon-large'], project_path + "/Push"
+	ImageProcessor.process_header_icon settings['icon-navigation-bar'], project_path + "/Push"
+
+	solid_color_image = "images/images-generated/launch-background-color@3x.png"
+	ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
+	FileUtils.cp(solid_color_image, project_path + "/Push")
+
+	suffix = ""
+	if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
+		suffix = "-#{settings['suffix']}"
+	end
+
+	settings['languages'].each do |language|
+		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/Push/" + "about_text-#{language}.html")
+	end
+
+
+	Dir.chdir(project_path) do
+		if(options[:snapshot] == true)
+			p exec('snapshot')
+			break
+		end
+		lane = nil
+
+		if(options[:production] == true)
+			lane = "ios deploy"
+		elsif(options[:beta] == true)
+			build_notes = prompt "Build notes?: "
+			lane = "ios beta notes:#{build_notes}"
+		end
+		p exec("fastlane #{lane}")
+	end
+=end
+end
+
 options = Parser.parse ARGV
-settings = Generator.generate options
 
-p "Current path is: #{Dir.pwd}"
-ios_project_path = prompt "iOS Project Path: "
-ios_project_path.strip!
-
-if(File.exist?(ios_project_path) == false)
-	p "Directory not found."
-	abort
+case options[:mode]
+when "android"
+	generateAndroid options	
+when "ios"
+	generateIOS options
+else
+	generateIOS options
+	generateAndroid options
 end
-
-keys_final_location = ios_project_path + "/" + "Push"
-FileUtils.cp("./ios/SecretKeys.plist", keys_final_location)
-FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
-FileUtils.cp("./ios/Info.plist", keys_final_location)
-
-ImageProcessor.process_logo settings['icon-large'], ios_project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
-ImageProcessor.process_logo settings['icon-large'], ios_project_path + "/Push"
-ImageProcessor.process_header_icon settings['icon-navigation-bar'], ios_project_path + "/Push"
-
-solid_color_image = "images/images-generated/launch-background-color@3x.png"
-ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
-FileUtils.cp(solid_color_image, ios_project_path + "/Push")
-
-suffix = ""
-if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
-	suffix = "-#{settings['suffix']}"
-end
-
-settings['languages'].each do |language|
-	FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", ios_project_path + "/Push/" + "about_text-#{language}.html")
-end
-
-
-
-Dir.chdir(ios_project_path) do
-	p exec('fastlane gen_test')
-end
-
-
 
 
 
