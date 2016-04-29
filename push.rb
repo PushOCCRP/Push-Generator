@@ -6,7 +6,9 @@ require 'byebug'
 require 'yaml'
 require 'erb'
 require 'fileutils'
+require 'find'
 require 'mini_magick'
+require "pp"
 
 Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode)
 
@@ -306,38 +308,95 @@ class Generator
 		end
 	end
 
-	def self.setAndroidTitle settings
+	def self.setAndroidTitle settings, root_path
 		#Set the name of the app in all relevant language files
-		settings[:languages].each do |language|
-			  text = File.read(file_name)
+		folders = ["values"]
+		settings['languages'].each do |language|
+			if(language != "en")
+				folders << "values-" + language
+			end
+		end
+	
+		folders.each do |folder|
+			path = root_path + "/app/src/main/res/" + folder + "/strings.xml"
+			text = File.read(path)
+			replaced_text = text.gsub /<string name=\"app_name\">[A-z\s]*<\/string>/, "<string name=\"app_name\">#{settings['name']}<\/string>"
+			tmp_file_path = 'templates/android/strings/' + folder + '_strings.xml'
+			File.write(tmp_file_path, replaced_text)
+			FileUtils.cp(tmp_file_path, path)
 		end
 	end
 end
 
 class ImageProcessor
-	def self.process_logo image_name, final_location
+	def self.process_ios_logo image_name, final_location
 		image_sizes = {
-		 ["images/images-generated/app-store-icon.png"] => "1024x1024",
- 		 ["images/images-generated/launch-screen-logo@3x.png"] => "708x708",
- 		 ["images/images-generated/icon@3x.png","images/images-generated/icon@3x-1.png"] => "540x540",
- 		 ["images/images-generated/logo-512.png"] => "512x512",
- 		 ["images/images-generated/icon@2x.png","images/images-generated/icon@2x-1.png","images/images-generated/icon@2x-2.png","images/images-generated/icon@2x-3.png","images/images-generated/icon@2x-4.png","images/images-generated/icon@2x-5.png","images/images-generated/icon@2x-6.png"] => "360x360",
- 		 ["images/images-generated/icon 167x167.png", "images/images-generated/icon 167x167-1.png", "images/images-generated/icon 167x167-2.png"] => "167x167",
- 		 ["images/images-generated/icon 152x152.png"] => "152x152",
- 		 ["images/images-generated/icon 120x120.png"] => "120x120",
- 		 ["images/images-generated/icon@1x.png", "images/images-generated/icon@1x-1.png", "images/images-generated/icon@1x-2.png"] => "76x76",
+		 ["images/images-generated/ios/app-store-icon.png"] => "1024x1024",
+ 		 ["images/images-generated/ios/launch-screen-logo@3x.png"] => "708x708",
+ 		 ["images/images-generated/ios/icon@3x.png","images/images-generated/ios/icon@3x-1.png"] => "540x540",
+ 		 ["images/images-generated/ios/logo-512.png"] => "512x512",
+ 		 ["images/images-generated/ios/icon@2x.png","images/images-generated/ios/icon@2x-1.png","images/images-generated/ios/icon@2x-2.png","images/images-generated/ios/icon@2x-3.png","images/images-generated/ios/icon@2x-4.png","images/images-generated/ios/icon@2x-5.png","images/images-generated/ios/icon@2x-6.png"] => "360x360",
+ 		 ["images/images-generated/ios/icon 167x167.png", "images/images-generated/ios/icon 167x167-1.png", "images/images-generated/ios/icon 167x167-2.png"] => "167x167",
+ 		 ["images/images-generated/ios/icon 152x152.png"] => "152x152",
+ 		 ["images/images-generated/ios/icon 120x120.png"] => "120x120",
+ 		 ["images/images-generated/ios/icon@1x.png", "images/images-generated/ios/icon@1x-1.png", "images/images-generated/ios/icon@1x-2.png"] => "76x76",
 		}
 		process image_sizes, image_name, final_location
 	end
 
-	def self.process_header_icon image_name, final_location
+	def self.process_ios_header_icon image_name, final_location
 		image_sizes = {
- 		 ["images/images-generated/logo@3x.png"] => "132x500",
- 		 ["images/images-generated/logo@2x.png"] => "88x500",
- 		 ["images/images-generated/logo@1x.png"] => "44x500",
+ 		 ["images/images-generated/ios/logo@3x.png"] => "132x500",
+ 		 ["images/images-generated/ios/logo@2x.png"] => "88x500",
+ 		 ["images/images-generated/ios/logo@1x.png"] => "44x500",
 		}
 		process image_sizes, image_name, final_location
 	end
+
+	def self.process_android_logo image_name, final_location
+		xxhdpi_image_sizes = {
+		 ["images/images-generated/android/ic_launcher.png"] => "144x144",
+		}
+
+		xhdpi_image_sizes = {
+			["images/images-generated/android/ic_launcher.png"] => "96x96",
+		}
+
+		hdpi_image_sizes = {
+			["images/images-generated/android/ic_launcher.png"] => "72x72",
+		}
+		mdpi_image_sizes = {
+			["images/images-generated/android/ic_launcher.png"] => "48x48",
+		}
+
+		process xxhdpi_image_sizes, image_name, (final_location + "/mipmap-xxhdpi")
+		process xhdpi_image_sizes, image_name, (final_location + "/mipmap-xhdpi")
+		process hdpi_image_sizes, image_name, (final_location + "/mipmap-hdpi")
+		process mdpi_image_sizes, image_name, (final_location + "/mipmap-mdpi")
+	end
+
+	def self.process_android_header_icon image_name, final_location
+		xxhdpi_image_sizes = {
+		 ["images/images-generated/android/logo.png"] => "300x500",
+		}
+
+		xhdpi_image_sizes = {
+			["images/images-generated/android/logo.png"] => "250x500",
+		}
+
+		hdpi_image_sizes = {
+			["images/images-generated/android/logo.png"] => "200x500",
+		}
+		mdpi_image_sizes = {
+			["images/images-generated/android/logo.png"] => "150x500",
+		}
+
+		process xxhdpi_image_sizes, image_name, (final_location + "/mipmap-xxhdpi")
+		process xhdpi_image_sizes, image_name, (final_location + "/mipmap-xhdpi")
+		process hdpi_image_sizes, image_name, (final_location + "/mipmap-hdpi")
+		process mdpi_image_sizes, image_name, (final_location + "/mipmap-mdpi")
+	end
+
 
 	def self.process image_sizes, image_name, final_location
 		image = MiniMagick::Image.open("images/#{image_name}")
@@ -350,7 +409,6 @@ class ImageProcessor
 				FileUtils.cp(file_name, final_location)
 			end
 		end
-
 	end
 
 	#Takes hex
@@ -358,9 +416,7 @@ class ImageProcessor
 		MiniMagick::Tool::Convert.new do |convert|
 		  convert.merge! ["-size", "1200x1200", "xc:#{color}"]
 		  convert << file_name
-		end
-		#continue!!!!
-
+		end		
 	end
 end
 
@@ -398,9 +454,9 @@ def generateIOS options
 	FileUtils.cp("./ios/Appfile", project_path + "/fastlane")
 	FileUtils.cp("./ios/Snapfile", project_path + "/fastlane")
 
-	ImageProcessor.process_logo settings['icon-large'], project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
-	ImageProcessor.process_logo settings['icon-large'], project_path + "/Push"
-	ImageProcessor.process_header_icon settings['icon-navigation-bar'], project_path + "/Push"
+	ImageProcessor.process_ios_logo settings['icon-large'], project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
+	ImageProcessor.process_ios_logo settings['icon-large'], project_path + "/Push"
+	ImageProcessor.process_ios_header_icon settings['icon-navigation-bar'], project_path + "/Push"
 
 	solid_color_image = "images/images-generated/launch-background-color@3x.png"
 	ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
@@ -444,7 +500,6 @@ def generateAndroid options
 	end
 
 	settings = Generator.generate options, version_number.strip!, build_number.strip!, :android
-	Generator.setAndroidTitle settings
 
 	p "Current path is: #{Dir.pwd}"
 	project_path = prompt "Android Project Path: "
@@ -455,6 +510,9 @@ def generateAndroid options
 		abort
 	end
 
+	Generator.setAndroidTitle settings, project_path
+
+
 	keys_final_location = project_path + "/" + "app"
 	FileUtils.cp("./android/safe_variables.gradle", keys_final_location)
 	FileUtils.cp("./android/colors.xml", keys_final_location + "/src/main/res/values/")
@@ -462,21 +520,14 @@ def generateAndroid options
 	FileUtils.cp("./android/AndroidManifestDebug.xml", keys_final_location + "/src/debug/AndroidManifest.xml")
 	FileUtils.cp("./android/build.gradle", keys_final_location)
 
+	ImageProcessor.process_android_logo settings['icon-large'], project_path + "/app/src/main/res"
+	ImageProcessor.process_android_header_icon settings['icon-navigation-bar'], project_path + "/app/src/main/res"
+
 =begin
-	FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
-	FileUtils.cp("./ios/Info.plist", keys_final_location)
-	FileUtils.cp("./ios/project.pbxproj", project_path + "/Push.xcodeproj")
-	FileUtils.cp("./ios/Fastfile", project_path + "/fastlane")
-	FileUtils.cp("./ios/Appfile", project_path + "/fastlane")
-	FileUtils.cp("./ios/Snapfile", project_path + "/fastlane")
-
-	ImageProcessor.process_logo settings['icon-large'], project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
-	ImageProcessor.process_logo settings['icon-large'], project_path + "/Push"
-	ImageProcessor.process_header_icon settings['icon-navigation-bar'], project_path + "/Push"
-
 	solid_color_image = "images/images-generated/launch-background-color@3x.png"
 	ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
 	FileUtils.cp(solid_color_image, project_path + "/Push")
+=end
 
 	suffix = ""
 	if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
@@ -484,26 +535,97 @@ def generateAndroid options
 	end
 
 	settings['languages'].each do |language|
-		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/Push/" + "about_text-#{language}.html")
+		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/app/src/main/assets/" + "about_text-#{language}.html")
+	end
+
+	#requires https://github.com/PushOCCRP/android-rename-package
+	p "Changing Android package name to #{settings['android-bundle-identifier']}"
+
+	renameAndroidImports project_path, settings['android-bundle-identifier']
+	#p exec("rp r #{project_path} --package-name #{settings['android-bundle-identifier']}")
+	renameAndroidPackageFolders 'main', settings['android-bundle-identifier'], project_path
+	renameAndroidPackageFolders 'test', settings['android-bundle-identifier'], project_path
+
+	#if(options[:snapshot] == true)
+	#	p exec('snapshot')
+	#	break
+	#end
+	#lane = nil
+
+	#if(options[:production] == true)
+		#lane = "ios deploy"
+	#elsif(options[:beta] == true)
+		#build_notes = prompt "Build notes?: "
+		#lane = "ios beta notes:#{build_notes}"
+	#end
+	#p exec("fastlane #{lane}")
+end
+
+def renameAndroidImports project_path, identifier
+	Find.find(project_path) do |path|
+	  if FileTest.directory?(path)
+	    if File.basename(path)[0] == ?.
+	      Find.prune       # Don't look any further into this directory.
+	    else
+	      next
+	    end
+	  elsif File.extname(path) == ".java"
+		text = File.read(path)
+		text.gsub!(/com.push.[A-z]*/, identifier)
+		File.write(path, text)
+	  else
+ 		#cleaning...
+	  	if(File.basename(path) == '.byebug_history')
+	  		FileUtils.rm path
+	  	end
+ 	  end
 	end
 
 
-	Dir.chdir(project_path) do
-		if(options[:snapshot] == true)
-			p exec('snapshot')
-			break
-		end
-		lane = nil
+end
 
-		if(options[:production] == true)
-			lane = "ios deploy"
-		elsif(options[:beta] == true)
-			build_notes = prompt "Build notes?: "
-			lane = "ios beta notes:#{build_notes}"
-		end
-		p exec("fastlane #{lane}")
+def renameAndroidPackageFolders mode, identifier, project_path
+	path = nil
+	case mode
+	when "main"
+		path = '/app/src/main/java/'
+	when "test"
+		path = '/app/src/androidTest/java/'
 	end
-=end
+
+	identifier_parts = identifier.split('.')
+	identifier_parts.insert 0, ""
+
+	identifier_parts.each do |part|
+		part_index = identifier_parts.find_index(part)
+		item_index = part_index + 1
+		if(identifier_parts.count > item_index)
+
+			i = 0
+			finished_path = project_path + path
+			until i > part_index
+				finished_path += identifier_parts[i] + "/"
+				i += 1
+			end
+
+			Dir.chdir(finished_path) do
+				directories = Dir['*/'] 
+				start_dir = Dir.pwd + "/" + directories[0]
+				end_dir = Dir.pwd + "/" + identifier_parts[item_index] + "/"
+
+				p "Chaging #{start_dir} to #{end_dir}"
+
+				if(start_dir != end_dir)
+					begin
+						FileUtils.mv(start_dir, end_dir)
+					rescue Exception => e
+						byebug
+					end
+				end
+			end
+		end
+	end
+
 end
 
 options = Parser.parse ARGV
