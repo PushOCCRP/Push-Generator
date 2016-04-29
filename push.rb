@@ -552,6 +552,14 @@ def generateAndroid options
 	#end
 	#lane = nil
 
+	Dir.chdir(project_path) do
+		p system("gradle clean")
+		p system("gradle build")
+		p system("gradle assembleRelease")
+		#apk is here: app/build/outputs/apk/app-release.apk
+
+	end
+
 	#if(options[:production] == true)
 		#lane = "ios deploy"
 	#elsif(options[:beta] == true)
@@ -569,7 +577,7 @@ def renameAndroidImports project_path, identifier
 	    else
 	      next
 	    end
-	  elsif File.extname(path) == ".java"
+	  elsif File.extname(path) == ".java" || File.extname(path) == '.xml'
 		text = File.read(path)
 		text.gsub!(/com.push.[A-z]*/, identifier)
 		File.write(path, text)
