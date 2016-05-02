@@ -14,7 +14,19 @@
     <!-- Needed for push notifications that contain VIBRATE flag. Optional, but recommended. -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <permission
+  <!-- Fastland Supply screenshot app -->
+  <!-- Allows unlocking your device and activating its screen so UI tests can succeed -->
+  <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+  <!-- Allows for storing and retrieving screenshots -->
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+  <!-- Allows changing locales -->
+  <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+
+  <permission
         android:name="<%= settings["android-bundle-identifier"] %>.permission.C2D_MESSAGE"
         android:protectionLevel="normal" />
 
@@ -58,7 +70,8 @@
             </intent-filter>
         </activity>
 
-        <!-- Push Notifications -->
+
+      <!-- Push Notifications -->
         <service android:name="com.infobip.push.PushActionService" />
         <service android:name="com.infobip.push.GcmService" />
 

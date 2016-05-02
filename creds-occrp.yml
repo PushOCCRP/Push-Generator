@@ -26,3 +26,13 @@ fabric-key: "e8e3bbc2256c70be95a43e59ef78a0e1b312db75"
 facebook-key: "148846052145556"
 # Paypal donation URL
 donation-url: "https://www.occrp.org/en/donate"
+# Android Store File Path
+android-store-file-path: "../../../AndroidKeystore.jks"
+# Android keystore password
+android-store-password: "pathology"
+# Android key alias
+android-key-alias: "androidkeystore"
+# Android key password
+android-key-password: "pathology"
+# Android Play Developers Console credentials json file path
+android-dev-console-json-path: "../Google Play Android Developer-ffbacbce02ec.json"

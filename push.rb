@@ -8,9 +8,10 @@ require 'erb'
 require 'fileutils'
 require 'find'
 require 'mini_magick'
-require "pp"
+require 'pp'
+require 'colorize'
 
-Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode)
+Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode, :android_path, :ios_path)
 
 class Parser
   def self.parse(options)
@@ -38,6 +39,15 @@ class Parser
       opts.on("-mMODE", "--mode=mode", "Flag for Android (android) or iOS (ios), e.g. -m android") do |n|
       	args.mode = n
       end
+
+      opts.on("-aANDROID_PATH", "--android-path=android_path", "Path to Android base app, if not passed the user will be prompted during the build") do |n|
+      	args.android_path = n
+      end
+
+      opts.on("-iIOS_PATH", "--ios-path=ios_path", "Path to iOS base app, if not passed the user will be prompted during the build") do |n|
+      	args.ios_path = n
+      end
+
 
       opts.on("-h", "--help", "Prints this help") do
         puts opts
@@ -252,7 +262,6 @@ class Generator
 		rendered_template = self.generateSettingsFile settings, template
 		saveFile 'android/build.gradle', rendered_template
 
-
 	end
 
 
@@ -436,12 +445,17 @@ def generateIOS options
 
 	settings = Generator.generate options, version_number.strip!, build_number.strip!, :ios
 
-	p "Current path is: #{Dir.pwd}"
-	project_path = prompt "iOS Project Path: "
-	project_path.strip!
+	if(options[:ios_path].empty?)
+		p "Current path is: #{Dir.pwd}"
+		project_path = prompt "iOS Project Path: "
+		project_path.strip!
+	else
+		project_path = options[:ios_path]
+		p "iOS build path is #{project_path}"
+	end
 
 	if(File.exist?(project_path) == false)
-		p "Directory not found."
+		p "iOS build path directory not found."
 		abort
 	end
 
@@ -474,7 +488,7 @@ def generateIOS options
 
 	Dir.chdir(project_path) do
 		if(options[:snapshot] == true)
-			p exec('snapshot')
+			p system('snapshot')
 			break
 		end
 		lane = nil
@@ -484,8 +498,11 @@ def generateIOS options
 		elsif(options[:beta] == true)
 			build_notes = prompt "Build notes?: "
 			lane = "ios beta notes:#{build_notes}"
+		else
+			lane = "ios gen_test"
 		end
-		p exec("fastlane #{lane}")
+
+		p system("fastlane #{lane}")
 	end
 
 end
@@ -501,17 +518,21 @@ def generateAndroid options
 
 	settings = Generator.generate options, version_number.strip!, build_number.strip!, :android
 
-	p "Current path is: #{Dir.pwd}"
-	project_path = prompt "Android Project Path: "
-	project_path.strip!
+	if(options[:android_path].empty?)
+		p "Current path is: #{Dir.pwd}"
+		project_path = prompt "Android Project Path: "
+		project_path.strip!
+	else
+		project_path = options[:android_path]
+		p "iOS build path is #{project_path}"
+	end
 
 	if(File.exist?(project_path) == false)
-		p "Directory not found."
+		p "Android base project directory not found."
 		abort
 	end
 
 	Generator.setAndroidTitle settings, project_path
-
 
 	keys_final_location = project_path + "/" + "app"
 	FileUtils.cp("./android/safe_variables.gradle", keys_final_location)
@@ -557,15 +578,26 @@ def generateAndroid options
 		p system("gradle build")
 		p system("gradle assembleRelease")
 		#apk is here: app/build/outputs/apk/app-release.apk
-
+		#use fastlane to upload now
 	end
 
-	#if(options[:production] == true)
+	if(options[:production] == true)
+		command = "supply init --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
+		p command
+		p system(command)
+		command = "supply --apk #{project_path}/app/build/outputs/apk/app-release.apk --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
+		p command
+		success = p system(command)
+		if(success == false)
+			puts "Error uploading APK, if this is the very first build of a new app you have to upload the APK file manually".white.on_red
+			puts "The production APK is found at #{project_path}/app/build/outputs/apk/app-release.apk".white.on_red
+			puts "Go to https://play.google.com/apps to create the application in the Google Play Store and upload the APK.".white.on_red
+		end
 		#lane = "ios deploy"
-	#elsif(options[:beta] == true)
+	elsif(options[:beta] == true)
 		#build_notes = prompt "Build notes?: "
 		#lane = "ios beta notes:#{build_notes}"
-	#end
+	end
 	#p exec("fastlane #{lane}")
 end
 
