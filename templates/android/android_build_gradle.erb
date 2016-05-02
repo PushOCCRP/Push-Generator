@@ -24,12 +24,12 @@ android {
     }
 
     signingConfigs {
-        release {
-            storeFile file("../../../AndroidKeystore.jks")
-            storePassword "**********"
-            keyAlias "androidkeystore"
-            keyPassword "********"
-        }
+      release {
+        storeFile file("<%= settings[:credentials]['android-store-file-path'] %>")
+        storePassword "<%= settings[:credentials]['android-store-password'] %>"
+        keyAlias "<%= settings[:credentials]['android-key-alias'] %>"
+        keyPassword "<%= settings[:credentials]['android-key-password'] %>"
+      }
     }
     
     buildTypes {
@@ -105,6 +105,5 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     androidTestCompile 'com.android.support:support-annotations:23.3.0'
 
-    //androidTestCompile 'tools.fastlane:screengrab:0.2.0'
-
+    androidTestCompile 'tools.fastlane:screengrab:0.3.2'
 }
