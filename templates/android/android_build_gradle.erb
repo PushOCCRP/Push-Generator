@@ -18,9 +18,11 @@ android {
     defaultConfig {
         applicationId "<%= settings["android-bundle-identifier"] %>"
         minSdkVersion 17
-        targetSdkVersion 22
-        versionCode 1
-        versionName "<%= settings[:build_version] %>"
+        targetSdkVersion 23
+        versionCode <%= settings[:version_number].gsub(".", "") %>
+        versionName "<%= settings[:version_number] %>"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -104,6 +106,14 @@ dependencies {
     //compile 'com.google.android.gms:play-services-analytics:8.3.0'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     androidTestCompile 'com.android.support:support-annotations:23.3.0'
+
+    androidTestCompile 'com.android.support.test:runner:0.4'
+    // Set this dependency to use JUnit 4 rules
+    androidTestCompile 'com.android.support.test:rules:0.4'
+    // Set this dependency to build and run Espresso tests
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    // Set this dependency to build and run UI Automator tests
+    //androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 
     androidTestCompile 'tools.fastlane:screengrab:0.3.2'
 }
