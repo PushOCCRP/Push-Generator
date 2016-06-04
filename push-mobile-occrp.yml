@@ -8,7 +8,7 @@ short-name: "OCCRP"
 
 # Note: everytime a file changes you should recreate the pbxproj file
 ios-bundle-identifier: 'com.occrp.push'
-android-bundle-identifier: 'com.push.occrp'
+android-bundle-identifier: 'com.push.occrpnews'
 # Languages supported
 # First language is default
 # Throws an error if the language is no supported by Push
@@ -41,6 +41,10 @@ launch-background-color: "#FFFFFF"
 navigation-bar-color: "#90031F"
 # Navigation bar text color1
 navigation-text-color: "#FFFFFF"
+
+# Whether the author should be shown on articles
+# The default is true
+show-author: "true"
 
 # Default is blank, mostly used for the about text Files
 # for instance: the dault is "about_text-en.html", buf if you are managing multiple orgs

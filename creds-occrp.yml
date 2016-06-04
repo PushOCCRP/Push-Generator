@@ -27,6 +27,7 @@ facebook-key: "148846052145556"
 # Paypal donation URL
 donation-url: "https://www.occrp.org/en/donate"
 # Android Store File Path
+#android-store-file-path: "../pushoccr.keystore.jks"
 android-store-file-path: "../../../AndroidKeystore.jks"
 # Android keystore password
 android-store-password: "pathology"

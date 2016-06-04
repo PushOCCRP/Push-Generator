@@ -8,6 +8,8 @@ buildTypes {
         resValue "string", "youtube_key", "<%= settings[:credentials]['youtube-access-key'] %>"
         resValue "string", "default_language", "<%= settings["default-language"] %>"
         resValue "string", "available_languages", "<%= settings["languages"].join(',') %>"
+        resValue "string", "donation_url", "<%= settings[:credentials]['donation-url'] %>"
+        resValue "string", "show_author", "<%= settings["show-author"] %>"
     }
     release {
         resValue "string", "server_url", "<%= settings[:credentials]['server-url'] %>"
@@ -18,6 +20,8 @@ buildTypes {
         resValue "string", "youtube_key", "<%= settings[:credentials]['youtube-access-key'] %>"
         resValue "string", "default_language", "<%= settings["default-language"] %>"
         resValue "string", "available_languages", "<%= settings["languages"].join(',') %>"
+        resValue "string", "donation_url", "<%= settings[:credentials]['donation-url'] %>"
+        resValue "string", "show_author", "<%= settings["show-author"] %>"
     }
 }
 //Not my favorite choice, but to be honest, you should never get this anyways

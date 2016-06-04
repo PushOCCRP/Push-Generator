@@ -11,7 +11,7 @@ require 'mini_magick'
 require 'pp'
 require 'colorize'
 
-Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode, :android_path, :ios_path)
+Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode, :android_path, :ios_path, :offline)
 
 class Parser
   def self.parse(options)
@@ -34,6 +34,10 @@ class Parser
 
       opts.on("-b", "--beta", "Flag for beta push") do
       	args.beta = true
+      end
+
+      opts.on("-o", "--offline", "Flag for testing when offline, supercedes beta/production flags") do
+      	args.offline = true
       end
 
       opts.on("-mMODE", "--mode=mode", "Flag for Android (android) or iOS (ios), e.g. -m android") do |n|
@@ -86,7 +90,6 @@ class Generator
 		settings[:version_number] = version_number
 #		pp settings
 		#5.) Parse file into iOS format
-
 		case mode
 		when :iOS
 			generateiOSSettingsFile settings
@@ -121,6 +124,24 @@ class Generator
 			end		
 			return content
 		end
+	end
+
+	def self.copy_file start_location, end_location
+		error = nil
+		if(start_location.nil? || start_location.empty?)
+			error = "Start location cannot be empty"
+		elsif(start_location.nil? || start_location.empty?)
+			error = "Start location cannot be empty"
+		elsif(File.file?(start_location) == false)
+			error = "No file named #{start_location} found to copy"
+		end
+		
+		if(!error.nil?)
+			pp error
+			return
+		end
+
+		FileUtils.cp(start_location, end_location)
 	end
 
 	def self.parse_yaml_content content
@@ -262,6 +283,10 @@ class Generator
 		rendered_template = self.generateSettingsFile settings, template
 		saveFile 'android/build.gradle', rendered_template
 
+		template = self.loadTemplate('Android-Screengrabfile')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'android/Screengrabfile', rendered_template
+
 	end
 
 
@@ -277,31 +302,33 @@ class Generator
 	def self.loadTemplate type
 		content = nil
 		case type
-		when 'iOS-Security'
-			content = self.load_file('templates/ios/ios_secrets_template.erb', 'templates/ios/ios_secrets_template.erb')
-		when 'iOS-Settings'
-			content = self.load_file('templates/ios/ios_settings_template.erb', 'templates/ios/ios_settings_template.erb')
-		when 'iOS-Info'
-			content = self.load_file('templates/ios/ios_info_template.erb', 'templates/ios/ios_info_template.erb')
-		when 'iOS-PBX'
-			content = self.load_file('templates/ios/ios_project_pbxproj.erb', 'templates/ios/ios_project_pbxproj.erb')
-		when 'iOS-Fastfile'
-			content = self.load_file('templates/ios/ios_fastfile_template.erb', 'templates/ios/ios_fastfile_template.erb')
-		when 'iOS-Appfile'
-			content = self.load_file('templates/ios/ios_appfile_template.erb', 'templates/ios/ios_appfile_template.erb')
-		when 'iOS-Snapfile'
-			content = self.load_file('templates/ios/ios_snapfile_template.erb', 'templates/ios/ios_snapfile_template.erb')
+			when 'iOS-Security'
+				content = self.load_file('templates/ios/ios_secrets_template.erb', 'templates/ios/ios_secrets_template.erb')
+			when 'iOS-Settings'
+				content = self.load_file('templates/ios/ios_settings_template.erb', 'templates/ios/ios_settings_template.erb')
+			when 'iOS-Info'
+				content = self.load_file('templates/ios/ios_info_template.erb', 'templates/ios/ios_info_template.erb')
+			when 'iOS-PBX'
+				content = self.load_file('templates/ios/ios_project_pbxproj.erb', 'templates/ios/ios_project_pbxproj.erb')
+			when 'iOS-Fastfile'
+				content = self.load_file('templates/ios/ios_fastfile_template.erb', 'templates/ios/ios_fastfile_template.erb')
+			when 'iOS-Appfile'
+				content = self.load_file('templates/ios/ios_appfile_template.erb', 'templates/ios/ios_appfile_template.erb')
+			when 'iOS-Snapfile'
+				content = self.load_file('templates/ios/ios_snapfile_template.erb', 'templates/ios/ios_snapfile_template.erb')
 
-		when 'Android-Safe-Variables'
-			content = self.load_file('templates/android/android_safe_variable_gradle_template.erb', 'templates/android/android_safe_variable_gradle_template.erb')
-		when 'Android-Colors'
-			content = self.load_file('templates/android/android_colors_xml.erb', 'templates/android/android_colors_xml.erb')
-		when 'Android-Manifest'
-			content = self.load_file('templates/android/android_manifest_xml.erb', 'templates/android/android_manifest_xml.erb')
-		when 'Android-Manifest-Debug'
-			content = self.load_file('templates/android/android_manifest_debug_xml.erb', 'templates/android/android_manifest_debug_xml.erb')
-		when 'Android-Build-Gradle'
-			content = self.load_file('templates/android/android_build_gradle.erb', 'templates/android/android_build_gradle.erb')
+			when 'Android-Safe-Variables'
+				content = self.load_file('templates/android/android_safe_variable_gradle_template.erb', 'templates/android/android_safe_variable_gradle_template.erb')
+			when 'Android-Colors'
+				content = self.load_file('templates/android/android_colors_xml.erb', 'templates/android/android_colors_xml.erb')
+			when 'Android-Manifest'
+				content = self.load_file('templates/android/android_manifest_xml.erb', 'templates/android/android_manifest_xml.erb')
+			when 'Android-Manifest-Debug'
+				content = self.load_file('templates/android/android_manifest_debug_xml.erb', 'templates/android/android_manifest_debug_xml.erb')
+				when 'Android-Build-Gradle'
+				content = self.load_file('templates/android/android_build_gradle.erb', 'templates/android/android_build_gradle.erb')
+			when 'Android-Screengrabfile'
+				content = self.load_file('templates/android/android_screengrabfile.erb', 'templates/android/android_build_gradle.erb')
 		end
 
 		return content
@@ -443,7 +470,7 @@ def generateIOS options
 		build_number = prompt "iOS Build number: "
 	end
 
-	settings = Generator.generate options, version_number.strip!, build_number.strip!, :ios
+	settings = Generator.generate options, version_number.strip!, build_number.strip!, :iOS
 
 	if(options[:ios_path].empty?)
 		p "Current path is: #{Dir.pwd}"
@@ -485,7 +512,7 @@ def generateIOS options
 		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/Push/" + "about_text-#{language}.html")
 	end
 
-
+	file_suffix = nil
 	Dir.chdir(project_path) do
 		if(options[:snapshot] == true)
 			p system('snapshot')
@@ -493,18 +520,25 @@ def generateIOS options
 		end
 		lane = nil
 
-		if(options[:production] == true)
+		if(options[:offline] == true)
+			lane = "ios offline"
+			file_suffix = "offline"
+		elsif(options[:production] == true)
 			lane = "ios deploy"
+			file_suffix = "prod"
 		elsif(options[:beta] == true)
 			build_notes = prompt "Build notes?: "
 			lane = "ios beta notes:#{build_notes}"
+			file_suffix = "beta"
 		else
 			lane = "ios gen_test"
+			file_suffix = "beta"
 		end
 
 		p system("fastlane #{lane}")
 	end
 
+	Generator.copy_file(project_path + "/Push.ipa", "#{Dir.pwd}/finals/ios/#{binaryName(settings, file_suffix)}.ipa")
 end
 
 def generateAndroid options
@@ -524,7 +558,7 @@ def generateAndroid options
 		project_path.strip!
 	else
 		project_path = options[:android_path]
-		p "iOS build path is #{project_path}"
+		p "Android build path is #{project_path}"
 	end
 
 	if(File.exist?(project_path) == false)
@@ -540,6 +574,7 @@ def generateAndroid options
 	FileUtils.cp("./android/AndroidManifest.xml", keys_final_location + "/src/main/")
 	FileUtils.cp("./android/AndroidManifestDebug.xml", keys_final_location + "/src/debug/AndroidManifest.xml")
 	FileUtils.cp("./android/build.gradle", keys_final_location)
+	FileUtils.cp("./android/Screengrabfile", keys_final_location + "/fastlane")
 
 	ImageProcessor.process_android_logo settings['icon-large'], project_path + "/app/src/main/res"
 	ImageProcessor.process_android_header_icon settings['icon-navigation-bar'], project_path + "/app/src/main/res"
@@ -581,7 +616,10 @@ def generateAndroid options
 		#use fastlane to upload now
 	end
 
-	if(options[:production] == true)
+	final_name_suffix = "_beta"
+	if(options[:offline] == true)
+		final_name_suffix = "offline"
+	elsif(options[:production] == true)
 		command = "supply init --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
 		p command
 		p system(command)
@@ -593,12 +631,19 @@ def generateAndroid options
 			puts "The production APK is found at #{project_path}/app/build/outputs/apk/app-release.apk".white.on_red
 			puts "Go to https://play.google.com/apps to create the application in the Google Play Store and upload the APK.".white.on_red
 		end
+		final_name_suffix = "_prod"
 		#lane = "ios deploy"
 	elsif(options[:beta] == true)
 		#build_notes = prompt "Build notes?: "
 		#lane = "ios beta notes:#{build_notes}"
 	end
+
+	Generator.copy_file("#{project_path}/app/build/outputs/apk/app-release.apk", "#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk")
 	#p exec("fastlane #{lane}")
+end
+
+def binaryName settings, suffix
+	return "#{settings['short-name']}_#{Time.now.strftime("%Y%m%d_%H%M%S")}_#{suffix}"
 end
 
 def renameAndroidImports project_path, identifier
