@@ -4,6 +4,7 @@ require 'optparse'
 require 'pp'
 require 'byebug'
 require 'yaml'
+require 'json'
 require 'erb'
 require 'fileutils'
 require 'find'
@@ -202,7 +203,7 @@ class Generator
 	end
 
 	def self.verify_credentials_format credentials
-		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'hockey-secret', 'infobip-application-id', 'infobip-application-secret', 'play-store-app-number', 'fabric-key']
+		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'hockey-secret', 'uniqush', 'play-store-app-number', 'fabric-key']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, credentials)
 		end
@@ -291,11 +292,11 @@ class Generator
 
 
 	def self.generateSettingsFile settings, template
+	
 		b = binding
 		b.local_variable_set :setting, settings
 		@rendered
-    	ERB.new(template, nil, '%<>-', "@rendered").result(b)
-    	
+		ERB.new(template, nil, '%<>-', "@rendered").result(b)    	
     	return @rendered
 	end
 
@@ -382,9 +383,9 @@ class ImageProcessor
 
 	def self.process_ios_header_icon image_name, final_location
 		image_sizes = {
- 		 ["images/images-generated/ios/logo@3x.png"] => "132x500",
- 		 ["images/images-generated/ios/logo@2x.png"] => "88x500",
- 		 ["images/images-generated/ios/logo@1x.png"] => "44x500",
+ 		 ["images/images-generated/ios/logo@3x.png"] => "500x132",
+ 		 ["images/images-generated/ios/logo@2x.png"] => "500x88",
+ 		 ["images/images-generated/ios/logo@1x.png"] => "500x44",
 		}
 		process image_sizes, image_name, final_location
 	end
@@ -411,8 +412,121 @@ class ImageProcessor
 		process mdpi_image_sizes, image_name, (final_location + "/mipmap-mdpi")
 	end
 
+	def self.process_android_button_images color, final_location
+		change_color 'images/android/ic_language.png', color, 'ic_language.png'
+
+		xxhdpi_image_sizes = {
+
+		 ["images/images-generated/android/ic_language.png"] => "108x78",
+		}
+
+		xhdpi_image_sizes = {
+			["images/images-generated/android/ic_language.png"] => "72x52",
+		}
+
+		hdpi_image_sizes = {
+			["images/images-generated/android/ic_language.png"] => "54x39",
+		}
+		mdpi_image_sizes = {
+			["images/images-generated/android/ic_language.png"] => "36x26",
+		}
+
+		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/ic_language.png', final_location
+
+
+		change_color 'images/android/about.png', color, 'about.png'
+		xxhdpi_image_sizes = {
+
+		 ["images/images-generated/android/about.png"] => "68x70",
+		}
+
+		xhdpi_image_sizes = {
+			["images/images-generated/android/about.png"] => "68x70",
+		}
+
+		hdpi_image_sizes = {
+			["images/images-generated/android/about.png"] => "34x35",
+		}
+		mdpi_image_sizes = {
+			["images/images-generated/android/about.png"] => "34x35",
+		}
+
+		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/about.png', final_location
+
+		change_color 'images/android/ic_action_cancel.png', color, 'ic_action_cancel.png'
+		xxhdpi_image_sizes = {
+
+		 ["images/images-generated/android/ic_action_cancel.png"] => "96x96",
+		}
+
+		xhdpi_image_sizes = {
+			["images/images-generated/android/ic_action_cancel.png"] => "64x64",
+		}
+
+		hdpi_image_sizes = {
+			["images/images-generated/android/ic_action_cancel.png"] => "34x35",
+		}
+		mdpi_image_sizes = {
+			["images/images-generated/android/ic_action_cancel.png"] => "34x35",
+		}
+
+		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/ic_action_cancel.png', final_location
+
+		change_color 'images/android/ic_search_white.png', color, 'ic_search_white.png'
+		xxhdpi_image_sizes = {
+
+		 ["images/images-generated/android/ic_search_white.png"] => "144x144",
+		}
+
+		xhdpi_image_sizes = {
+			["images/images-generated/android/ic_search_white.png"] => "96x96",
+		}
+
+		hdpi_image_sizes = {
+			["images/images-generated/android/ic_search_white.png"] => "72x72",
+		}
+		mdpi_image_sizes = {
+			["images/images-generated/android/ic_search_white.png"] => "48x48",
+		}
+
+		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/ic_search_white.png', final_location
+
+		change_color 'images/android/ic_share_white_48dp.png', color, 'ic_share_white_48dp.png'
+		xxhdpi_image_sizes = {
+
+		 ["images/images-generated/android/ic_share_white_48dp.png"] => "144x144",
+		}
+
+		xhdpi_image_sizes = {
+			["images/images-generated/android/ic_share_white_48dp.png"] => "96x96",
+		}
+
+		hdpi_image_sizes = {
+			["images/images-generated/android/ic_share_white_48dp.png"] => "72x72",
+		}
+		mdpi_image_sizes = {
+			["images/images-generated/android/ic_share_white_48dp.png"] => "48x48",
+		}
+
+		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/ic_share_white_48dp.png', final_location
+
+		#1.) change the colors
+		#2.) size the files correctly
+		#3.) place them into the correct android mipmap folders
+		#copy from the header right below
+	end
+
+	def self.process_mipmap_images sizes, name, final_location
+		process sizes[0], name, (final_location + "/mipmap-xxhdpi")
+		process sizes[1], name, (final_location + "/mipmap-xhdpi")
+		process sizes[2], name, (final_location + "/mipmap-hdpi")
+		process sizes[3], name, (final_location + "/mipmap-mdpi")
+
+	end
+
 	def self.process_android_header_icon image_name, final_location
 		xxhdpi_image_sizes = {
+
 		 ["images/images-generated/android/logo.png"] => "300x500",
 		}
 
@@ -445,6 +559,15 @@ class ImageProcessor
 				FileUtils.cp(file_name, final_location)
 			end
 		end
+	end
+
+	def self.change_color image_name, color, final_name
+		#image = MiniMagick::Image.open("images/#{image_name}")
+		MiniMagick::Tool::Convert.new do |convert|
+			#convert.fill(start_color)	
+			convert.merge! [image_name, '-fill', color, '+opaque', color, '-fuzz', '20%', "images/images-generated/android/#{final_name}"]
+		  	
+		end #=> `mogrify -resize 100x100 -negate image.jpg`
 	end
 
 	#Takes hex
@@ -512,6 +635,10 @@ def generateIOS options
 		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/Push/" + "about_text-#{language}.html")
 	end
 
+	if(File.file?("promotions/promotions#{suffix}.yml"))
+		FileUtils.cp("promotions/promotions#{suffix}.yml", project_path + "/Assets/promotions.yml")
+	end
+
 	file_suffix = nil
 	Dir.chdir(project_path) do
 		if(options[:snapshot] == true)
@@ -544,13 +671,15 @@ end
 def generateAndroid options
 	version_number = "1.0"
 	build_number = "1"
-
+	
 	if(options[:production] == true || options[:beta] == true)
 		version_number = prompt "Android Version number: "
 		build_number = prompt "Android Build number: "
+		version_number.strip!
+		build_number.strip!
 	end
 
-	settings = Generator.generate options, version_number.strip!, build_number.strip!, :android
+	settings = Generator.generate options, version_number, build_number, :android
 
 	if(options[:android_path].empty?)
 		p "Current path is: #{Dir.pwd}"
@@ -578,7 +707,7 @@ def generateAndroid options
 
 	ImageProcessor.process_android_logo settings['icon-large'], project_path + "/app/src/main/res"
 	ImageProcessor.process_android_header_icon settings['icon-navigation-bar'], project_path + "/app/src/main/res"
-
+	ImageProcessor.process_android_button_images settings['navigation-text-color'], project_path + "/app/src/main/res"
 =begin
 	solid_color_image = "images/images-generated/launch-background-color@3x.png"
 	ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
@@ -593,6 +722,25 @@ def generateAndroid options
 	settings['languages'].each do |language|
 		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/app/src/main/assets/" + "about_text-#{language}.html")
 	end
+
+	if(File.file?("promotions/promotions#{suffix}.yml"))
+		#since android <5.0 is terrible, we're switching to json parsing here
+
+		input_filename = "promotions/promotions#{suffix}.yml"
+		output_filename = input_filename.sub(/(yml|yaml)$/, 'json')
+
+		input_file = File.open(input_filename, 'r')
+		input_yml = input_file.read
+		input_file.close
+
+		output_json = JSON.dump(YAML::load(input_yml))
+
+		output_file = File.open(output_filename, 'w+')
+		output_file.write(output_json)
+		output_file.close
+		FileUtils.cp("promotions/promotions#{suffix}.json", project_path + "/app/src/main/assets/promotions.json")
+	end
+
 
 	#requires https://github.com/PushOCCRP/android-rename-package
 	p "Changing Android package name to #{settings['android-bundle-identifier']}"
