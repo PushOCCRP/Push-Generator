@@ -1,6 +1,16 @@
 
 
 ios/*
+android/*
 !ios/
 creds.yml
 push-mobile.yml
+finals/android/*
+finals/ios/*
+images/*
+!images/android
+!images/images-generated
+images/images-generated/*
+*.yml
+!push-mobile-credentials-template.yml
+!creds-template.yml

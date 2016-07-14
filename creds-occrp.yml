@@ -5,17 +5,17 @@
 # DO NOT CHECK THIS INTO THE REPOSITORY AFTER YOU'VE FILLED IT OUT
 
 # URL pointing to the Push-Backend app
-server-url: "https://push-backend.herokuapp.com"
+server-url: "https://occrp.pushapp.press"
 # origin url
 origin-url: "https://www.occrp.org"
 # Hockey Key
 hockey-key: "0dce3b5dc14d4f0889881da636cead08"
 # Hockey Secret
 hockey-secret: "0b69fda8a2124bc3bbf699b5c03b18ac"
-# Infobip application id
-infobip-application-id: "xxxxxxxxxx"
-# Infobip application secret
-infobip-application-secret: "xxxxxxxxxxxxx"
+# Uniqush service name
+uniqush: "occrp"
+# Google API App Number
+google-api-app-number: "772215886083"
 # Google Play Store app number
 play-store-app-number: "xxxxxxxxxxxxxxxxx"
 # Youtube access key
