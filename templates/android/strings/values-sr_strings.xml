@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">KRIK</string>
+    <string name="app_name">CINS</string>
 
     <string name="action_settings">Podešavanja</string>
     <string name="action_refresh">Ponovo učitaj</string>
@@ -31,6 +31,11 @@
     <string name="title_item_two">O nama</string>
     <string name="main_screen_cel_date_string">Datum</string>
     <string name="share_via">Podelite putem</string>
+
+    <!-- push notification labels -->
+    <string name="notification_header">Nova priča</string>
+    <string name="notification_cancel_button">Otkaži</string>
+    <string name="notification_read_button">Čitaj</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">O PUSH APP-u</string>
