@@ -31,6 +31,11 @@
     <string name="main_screen_cel_date_string">DATA</string>
     <string name="share_via">DISTRIBUIE</string>
 
+    <!-- push notification labels -->
+    <string name="notification_header">News Alert</string>
+    <string name="notification_cancel_button">Anulează</string>
+    <string name="notification_read_button">Citește</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">About the PUSH APP</string>
     <string name="title_activity_detail_post">DETALII</string>

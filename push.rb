@@ -67,7 +67,7 @@ end
 
 class Generator
 
-	def self.generate options, version_number, build_number, mode
+	def self.generate options, version_number, build_number, mode, production=false
 		#1.) Check if there's a file indicated in the call - DONE
 		#2.) If there's not a file, look for push-mobile.haml - DONE
 		file_content = load_file(options[:file_name], 'push-mobile.yml')
@@ -89,6 +89,8 @@ class Generator
 		settings[:credentials] = credentials
 		settings[:build_number] = build_number
 		settings[:version_number] = version_number
+
+		settings[:debug] = !production
 #		pp settings
 		#5.) Parse file into iOS format
 		case mode
@@ -526,19 +528,18 @@ class ImageProcessor
 
 	def self.process_android_header_icon image_name, final_location
 		xxhdpi_image_sizes = {
-
-		 ["images/images-generated/android/logo.png"] => "300x500",
+		 	["images/images-generated/android/logo.png"] => "800x128",
 		}
 
 		xhdpi_image_sizes = {
-			["images/images-generated/android/logo.png"] => "250x500",
+			["images/images-generated/android/logo.png"] => "800x92",
 		}
 
 		hdpi_image_sizes = {
-			["images/images-generated/android/logo.png"] => "200x500",
+			["images/images-generated/android/logo.png"] => "800x64",
 		}
 		mdpi_image_sizes = {
-			["images/images-generated/android/logo.png"] => "150x500",
+			["images/images-generated/android/logo.png"] => "800x48",
 		}
 
 		process xxhdpi_image_sizes, image_name, (final_location + "/mipmap-xxhdpi")
@@ -584,14 +585,7 @@ def prompt(*args)
     gets
 end
 
-def generateIOS options
-	version_number = "1.0"
-	build_number = "1"
-
-	if(options[:production] == true || options[:beta] == true)
-		version_number = prompt "iOS Version number: "
-		build_number = prompt "iOS Build number: "
-	end
+def generateIOS options, version_number = "1.0", build_number = "1"
 
 	settings = Generator.generate options, version_number.strip!, build_number.strip!, :iOS
 
@@ -632,7 +626,11 @@ def generateIOS options
 	end
 
 	settings['languages'].each do |language|
-		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/Push/" + "about_text-#{language}.html")
+		about_file_path = project_path + "/Push/" + "about_text-#{language}.html"
+		if(File.file?(about_file_path))
+			File.delete(about_file_path)
+		end
+		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", about_file_path)
 	end
 
 	if(File.file?("promotions/promotions#{suffix}.yml"))
@@ -668,18 +666,14 @@ def generateIOS options
 	Generator.copy_file(project_path + "/Push.ipa", "#{Dir.pwd}/finals/ios/#{binaryName(settings, file_suffix)}.ipa")
 end
 
-def generateAndroid options
-	version_number = "1.0"
-	build_number = "1"
-	
-	if(options[:production] == true || options[:beta] == true)
-		version_number = prompt "Android Version number: "
-		build_number = prompt "Android Build number: "
-		version_number.strip!
-		build_number.strip!
-	end
+def generateAndroid options, version_number = "1.0", build_number = "1"
 
-	settings = Generator.generate options, version_number, build_number, :android
+	settings = Generator.generate options, version_number, build_number, :android, options[:production]
+
+	suffix = ""
+	if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
+		suffix = "-#{settings['suffix']}"
+	end
 
 	if(options[:android_path].empty?)
 		p "Current path is: #{Dir.pwd}"
@@ -698,6 +692,14 @@ def generateAndroid options
 	Generator.setAndroidTitle settings, project_path
 
 	keys_final_location = project_path + "/" + "app"
+
+	if(!File.file?("./google-service/google-services#{suffix}.json"))
+		pp "No google-services.json file found for #{settings['suffix']}".red
+		return
+	end
+
+	FileUtils.cp("./google-service/google-services#{suffix}.json", keys_final_location + "/google-services.json");
+
 	FileUtils.cp("./android/safe_variables.gradle", keys_final_location)
 	FileUtils.cp("./android/colors.xml", keys_final_location + "/src/main/res/values/")
 	FileUtils.cp("./android/AndroidManifest.xml", keys_final_location + "/src/main/")
@@ -714,10 +716,6 @@ def generateAndroid options
 	FileUtils.cp(solid_color_image, project_path + "/Push")
 =end
 
-	suffix = ""
-	if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
-		suffix = "-#{settings['suffix']}"
-	end
 
 	settings['languages'].each do |language|
 		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/app/src/main/assets/" + "about_text-#{language}.html")
@@ -863,14 +861,50 @@ end
 
 options = Parser.parse ARGV
 
+ios_version_number = "1.0"
+ios_build_number = "1"
+android_version_number = "1.0"
+android_build_number = "1"
+
 case options[:mode]
 when "android"
-	generateAndroid options	
+	if(options[:production] == true || options[:beta] == true)
+		android_version_number = prompt "Android Version number: "
+		android_build_number = prompt "Android Build number: "
+		android_version_number.strip!
+		android_build_number.strip!
+		if(android_build_number.to_i < 100)
+			android_build_number = (android_build_number.to_i * 100).to_s
+		end
+	end
+
+	generateAndroid options	android_version_number, android_build_number
 when "ios"
-	generateIOS options
+
+	if(options[:production] == true || options[:beta] == true)
+		ios_version_number = prompt "iOS Version number: "
+		ios_build_number = prompt "iOS Build number: "
+	end
+
+	generateIOS options, ios_version_number, ios_build_number
 else
-	generateIOS options
-	generateAndroid options
+	if(options[:production] == true || options[:beta] == true)
+		ios_version_number = prompt "iOS Version number: "
+		ios_build_number = prompt "iOS Build number: "
+	end
+
+	if(options[:production] == true || options[:beta] == true)
+		android_version_number = prompt "Android Version number: "
+		android_build_number = prompt "Android Build number: "
+		android_version_number.strip!
+		android_build_number.strip!
+		if(android_build_number.to_i < 100)
+			android_build_number = (android_build_number.to_i * 100).to_s
+		end
+	end
+
+	generateIOS options, ios_version_number, ios_build_number
+	generateAndroid options	android_version_number, android_build_number
 end
 
 
