@@ -8,6 +8,8 @@ push-mobile.yml
 finals/android/*
 finals/ios/*
 images/*
+about-html/*
+google-service/*
 !images/android
 !images/images-generated
 images/images-generated/*
