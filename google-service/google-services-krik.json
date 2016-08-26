@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "242809506041",
+    "project_id": "krik-1372"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242809506041:android:a23922788ab6b960",
+        "android_client_info": {
+          "package_name": "com.push.krik"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmCPC_Y_d8pR7mukf8J6c6FN5pjwJTZak"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

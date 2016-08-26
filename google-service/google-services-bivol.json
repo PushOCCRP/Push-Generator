@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "20550933770",
+    "project_id": "bivol-1372"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20550933770:android:a6424dc59643d9d4",
+        "android_client_info": {
+          "package_name": "com.push.bivol"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2r6NYFJXTDqbOC-KZKJPjSNIJiCB4gwc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

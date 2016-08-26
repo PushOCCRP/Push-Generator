@@ -1,0 +1,64 @@
+{
+  "project_info": {
+    "project_number": "772215886083",
+    "project_id": "occrp-7993b"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772215886083:android:c4b25d83406fa249",
+        "android_client_info": {
+          "package_name": "com.push.occrp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0_UhVT-gm5xR6JMDlnd1OtiSNor49vBA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-69099704-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772215886083:android:c8ff9ca0281feff8",
+        "android_client_info": {
+          "package_name": "com.push.occrpnews"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0_UhVT-gm5xR6JMDlnd1OtiSNor49vBA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

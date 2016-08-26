@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "754262668085",
+    "project_id": "meydan-tv"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754262668085:android:5565d16618709020",
+        "android_client_info": {
+          "package_name": "com.push.meydan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZKCyejHxoATvpcxxfvHc8TkYMEHiU2yM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
