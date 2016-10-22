@@ -7,7 +7,9 @@ creds.yml
 push-mobile.yml
 finals/android/*
 finals/ios/*
-images/*
+images/*.png
+iamges/*.jpg
+images/*.gif
 about-html/*
 google-service/*
 !images/android

@@ -296,6 +296,8 @@ class Generator
 	def self.generateSettingsFile settings, template
 	
 		b = binding
+
+
 		b.local_variable_set :setting, settings
 		@rendered
 		ERB.new(template, nil, '%<>-', "@rendered").result(b)    	
@@ -372,13 +374,22 @@ class ImageProcessor
 		image_sizes = {
 		 ["images/images-generated/ios/app-store-icon.png"] => "1024x1024",
  		 ["images/images-generated/ios/launch-screen-logo@3x.png"] => "708x708",
- 		 ["images/images-generated/ios/icon@3x.png","images/images-generated/ios/icon@3x-1.png"] => "540x540",
  		 ["images/images-generated/ios/logo-512.png"] => "512x512",
- 		 ["images/images-generated/ios/icon@2x.png","images/images-generated/ios/icon@2x-1.png","images/images-generated/ios/icon@2x-2.png","images/images-generated/ios/icon@2x-3.png","images/images-generated/ios/icon@2x-4.png","images/images-generated/ios/icon@2x-5.png","images/images-generated/ios/icon@2x-6.png"] => "360x360",
- 		 ["images/images-generated/ios/icon 167x167.png", "images/images-generated/ios/icon 167x167-1.png", "images/images-generated/ios/icon 167x167-2.png"] => "167x167",
- 		 ["images/images-generated/ios/icon 152x152.png"] => "152x152",
- 		 ["images/images-generated/ios/icon 120x120.png"] => "120x120",
- 		 ["images/images-generated/ios/icon@1x.png", "images/images-generated/ios/icon@1x-1.png", "images/images-generated/ios/icon@1x-2.png"] => "76x76",
+		 ["images/images-generated/ios/icon-appstore.png"] => "512x512",
+ 		 ["images/images-generated/ios/icon@2x-2.png","images/images-generated/ios/icon@2x-6.png"] => "360x360",
+ 		 ["images/images-generated/ios/icon 167x167-1.png"] => "180x180",
+ 		 ["images/images-generated/ios/icon 167x167.png", "images/images-generated/ios/icon 167x167-2.png"] => "167x167",
+ 		 ["images/images-generated/ios/icon@2x-4.png", "images/images-generated/ios/icon 152x152.png"] => "152x152",
+ 		 ["images/images-generated/ios/icon 120x120.png", "images/images-generated/ios/icon@3x-1.png"] => "120x120",
+		 ["images/images-generated/ios/icon-spotlight@3x.png"] => "80x80",
+ 		 ["images/images-generated/ios/icon@3x.png"] => "87x87",
+ 		 ["images/images-generated/ios/icon@2x-3.png","images/images-generated/ios/icon@2x-5.png",] => "80x80",
+		 ["images/images-generated/ios/icon-spotlight@2x.png"] => "80x80",
+ 		 ["images/images-generated/ios/icon@1x-2.png"] => "76x76",
+ 		 ["images/images-generated/ios/icon@2x-1.png","images/images-generated/ios/icon@2x.png"] => "58x58",
+ 		 ["images/images-generated/ios/icon@1x-1.png"] => "40x40",
+		 ["images/images-generated/ios/icon-spotlight.png"] => "80x80",
+ 		 ["images/images-generated/ios/icon@1x.png"] => "29x29",
 		}
 		process image_sizes, image_name, final_location
 	end
@@ -626,6 +637,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 	end
 
 	settings['languages'].each do |language|
+
 		about_file_path = project_path + "/Push/" + "about_text-#{language}.html"
 		if(File.file?(about_file_path))
 			File.delete(about_file_path)
@@ -878,7 +890,7 @@ when "android"
 		end
 	end
 
-	generateAndroid options	android_version_number, android_build_number
+	generateAndroid options, android_version_number, android_build_number
 when "ios"
 
 	if(options[:production] == true || options[:beta] == true)
