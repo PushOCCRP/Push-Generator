@@ -290,6 +290,14 @@ class Generator
 		rendered_template = self.generateSettingsFile settings, template
 		saveFile 'android/Screengrabfile', rendered_template
 
+		template = self.loadTemplate('Android-Fastfile')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'android/Fastfile', rendered_template
+
+		template = self.loadTemplate('Android-Appfile')
+		rendered_template = self.generateSettingsFile settings, template
+		saveFile 'android/Appfile', rendered_template
+
 	end
 
 
@@ -330,10 +338,15 @@ class Generator
 				content = self.load_file('templates/android/android_manifest_xml.erb', 'templates/android/android_manifest_xml.erb')
 			when 'Android-Manifest-Debug'
 				content = self.load_file('templates/android/android_manifest_debug_xml.erb', 'templates/android/android_manifest_debug_xml.erb')
-				when 'Android-Build-Gradle'
+			when 'Android-Build-Gradle'
 				content = self.load_file('templates/android/android_build_gradle.erb', 'templates/android/android_build_gradle.erb')
 			when 'Android-Screengrabfile'
 				content = self.load_file('templates/android/android_screengrabfile.erb', 'templates/android/android_build_gradle.erb')
+			when 'Android-Fastfile'
+				content = self.load_file('templates/android/android_fastfile.erb', 'templates/android/android_fastfile.erb')
+			when 'Android-Appfile'
+				content = self.load_file('templates/android/android_appfile.erb', 'templates/android/android_appfile.erb')
+
 		end
 
 		return content
@@ -408,6 +421,10 @@ class ImageProcessor
 		 ["images/images-generated/android/ic_launcher.png"] => "144x144",
 		}
 
+		drawable_image_sizes = {
+			["images/images-generated/android/ic_launcher.png"] => "144x144",
+		}
+
 		xhdpi_image_sizes = {
 			["images/images-generated/android/ic_launcher.png"] => "96x96",
 		}
@@ -420,6 +437,7 @@ class ImageProcessor
 		}
 
 		process xxhdpi_image_sizes, image_name, (final_location + "/mipmap-xxhdpi")
+		process drawable_image_sizes, image_name, (final_location + "/drawable")
 		process xhdpi_image_sizes, image_name, (final_location + "/mipmap-xhdpi")
 		process hdpi_image_sizes, image_name, (final_location + "/mipmap-hdpi")
 		process mdpi_image_sizes, image_name, (final_location + "/mipmap-mdpi")
@@ -672,7 +690,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			file_suffix = "beta"
 		end
 
-		p system("fastlane #{lane}")
+		p system("bundle exec fastlane #{lane}")
 	end
 
 	Generator.copy_file(project_path + "/Push.ipa", "#{Dir.pwd}/finals/ios/#{binaryName(settings, file_suffix)}.ipa")
@@ -717,7 +735,9 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	FileUtils.cp("./android/AndroidManifest.xml", keys_final_location + "/src/main/")
 	FileUtils.cp("./android/AndroidManifestDebug.xml", keys_final_location + "/src/debug/AndroidManifest.xml")
 	FileUtils.cp("./android/build.gradle", keys_final_location)
-	FileUtils.cp("./android/Screengrabfile", keys_final_location + "/fastlane")
+	FileUtils.cp("./android/Screengrabfile", keys_final_location + "/../fastlane/Screengrabfile")
+	FileUtils.cp("./android/Fastfile", keys_final_location + "/../fastlane/Fastfile")
+	FileUtils.cp("./android/Appfile", keys_final_location + "/../fastlane/Appfile")
 
 	ImageProcessor.process_android_logo settings['icon-large'], project_path + "/app/src/main/res"
 	ImageProcessor.process_android_header_icon settings['icon-navigation-bar'], project_path + "/app/src/main/res"
@@ -792,12 +812,13 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		final_name_suffix = "_prod"
 		#lane = "ios deploy"
 	elsif(options[:beta] == true)
-		#build_notes = prompt "Build notes?: "
-		#lane = "ios beta notes:#{build_notes}"
+		build_notes = prompt "Build notes?: "
+		lane = "android beta notes:#{build_notes}"
 	end
 
 	Generator.copy_file("#{project_path}/app/build/outputs/apk/app-release.apk", "#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk")
-	#p exec("fastlane #{lane}")
+	p exec("cd #{project_path}")
+	p exec("cd #{project_path} && fastlane #{lane} apk:#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk") if(lane != nil)
 end
 
 def binaryName settings, suffix
@@ -856,7 +877,7 @@ def renameAndroidPackageFolders mode, identifier, project_path
 				start_dir = Dir.pwd + "/" + directories[0]
 				end_dir = Dir.pwd + "/" + identifier_parts[item_index] + "/"
 
-				p "Chaging #{start_dir} to #{end_dir}"
+				p "Changing #{start_dir} to #{end_dir}"
 
 				if(start_dir != end_dir)
 					begin
