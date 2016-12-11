@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name"><%= settings["name"] %></string>
+    <string name="app_name">Meydan TV</string>
 
     <string name="action_settings">Parametrlər</string>
     <string name="action_refresh">Yenilə</string>
@@ -33,6 +33,7 @@
 
     <string name="hello_blank_fragment">Meydan TV tətbiqetməsi haqqında</string>
     <string name="title_activity_detail_post">Aktivlik barədə ətraflı</string>
+    <string name="title_activity_category">Kateqoriya Məqalələr</string>
 
     <string name="hello_world">Salam dünya!</string>
     <string name="title_activity_home">Əsas səhifə aktivliyi</string>

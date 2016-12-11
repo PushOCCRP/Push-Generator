@@ -12,7 +12,16 @@ require 'mini_magick'
 require 'pp'
 require 'colorize'
 
-Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode, :android_path, :ios_path, :offline)
+Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new)
+
+Languages = { "az": "Azerbaijnai",
+			  "bg": "Bulgaria",
+			  "en": "English",
+			  "ka": "Georgian",
+			  "ro": "Romanian",
+			  "sr": "Serbian",
+			  "ru": "Russian"
+			}
 
 class Parser
   def self.parse(options)
@@ -39,6 +48,10 @@ class Parser
 
       opts.on("-o", "--offline", "Flag for testing when offline, supercedes beta/production flags") do
       	args.offline = true
+      end
+
+      opts.on("-n", "--new", "Flag creating a new application, runs 'produce' to create app on iTunes and Apple Developer Console") do
+      	args.new = true
       end
 
       opts.on("-mMODE", "--mode=mode", "Flag for Android (android) or iOS (ios), e.g. -m android") do |n|
@@ -89,6 +102,12 @@ class Generator
 		settings[:credentials] = credentials
 		settings[:build_number] = build_number
 		settings[:version_number] = version_number
+		settings[:language_names] = parse_languages settings['languages']
+		if(!settings['default_language'].nil? && settings['default_language'].empty?)
+			settings[:default_language_name] = settings[:language_names].first
+		else
+			settings[:default_language_name] = Languages[settings['default_language']]
+		end
 
 		settings[:debug] = !production
 #		pp settings
@@ -228,10 +247,27 @@ class Generator
 		end
 
 		if(settings[setting_name].nil? || settings[setting_name].empty?)
-			raise "'#{setting_name}' in settings file not properly formatted."
+			puts "'#{setting_name}' in settings file not properly formatted.".red
+			exit
 		end
 
 		return true
+	end
+
+	def self.parse_languages languages
+
+		language_strings = []
+
+		languages.each do |language|
+			if(Languages.has_key?(language.to_sym))
+				language_strings << Languages[language.to_sym]
+			else
+				puts "The language '#{language}' is not currently supported by Push.\nIf you'd like to add it please check ***link to doc****".red
+				exit
+			end
+		end
+
+		return language_strings
 	end
 
 	def self.generateiOSSettingsFile settings
@@ -290,7 +326,6 @@ class Generator
 		rendered_template = self.generateSettingsFile settings, template
 		saveFile 'android/Screengrabfile', rendered_template
 
-<<<<<<< HEAD
 		template = self.loadTemplate('Android-Fastfile')
 		rendered_template = self.generateSettingsFile settings, template
 		saveFile 'android/Fastfile', rendered_template
@@ -298,9 +333,6 @@ class Generator
 		template = self.loadTemplate('Android-Appfile')
 		rendered_template = self.generateSettingsFile settings, template
 		saveFile 'android/Appfile', rendered_template
-
-=======
->>>>>>> fe2f977d31077b847b8a3b2a5cff6aac5196b263
 	end
 
 
@@ -341,7 +373,6 @@ class Generator
 				content = self.load_file('templates/android/android_manifest_xml.erb', 'templates/android/android_manifest_xml.erb')
 			when 'Android-Manifest-Debug'
 				content = self.load_file('templates/android/android_manifest_debug_xml.erb', 'templates/android/android_manifest_debug_xml.erb')
-<<<<<<< HEAD
 			when 'Android-Build-Gradle'
 				content = self.load_file('templates/android/android_build_gradle.erb', 'templates/android/android_build_gradle.erb')
 			when 'Android-Screengrabfile'
@@ -350,13 +381,6 @@ class Generator
 				content = self.load_file('templates/android/android_fastfile.erb', 'templates/android/android_fastfile.erb')
 			when 'Android-Appfile'
 				content = self.load_file('templates/android/android_appfile.erb', 'templates/android/android_appfile.erb')
-
-=======
-				when 'Android-Build-Gradle'
-				content = self.load_file('templates/android/android_build_gradle.erb', 'templates/android/android_build_gradle.erb')
-			when 'Android-Screengrabfile'
-				content = self.load_file('templates/android/android_screengrabfile.erb', 'templates/android/android_build_gradle.erb')
->>>>>>> fe2f977d31077b847b8a3b2a5cff6aac5196b263
 		end
 
 		return content
@@ -430,14 +454,9 @@ class ImageProcessor
 		xxhdpi_image_sizes = {
 		 ["images/images-generated/android/ic_launcher.png"] => "144x144",
 		}
-
-<<<<<<< HEAD
 		drawable_image_sizes = {
 			["images/images-generated/android/ic_launcher.png"] => "144x144",
 		}
-
-=======
->>>>>>> fe2f977d31077b847b8a3b2a5cff6aac5196b263
 		xhdpi_image_sizes = {
 			["images/images-generated/android/ic_launcher.png"] => "96x96",
 		}
@@ -450,10 +469,7 @@ class ImageProcessor
 		}
 
 		process xxhdpi_image_sizes, image_name, (final_location + "/mipmap-xxhdpi")
-<<<<<<< HEAD
 		process drawable_image_sizes, image_name, (final_location + "/drawable")
-=======
->>>>>>> fe2f977d31077b847b8a3b2a5cff6aac5196b263
 		process xhdpi_image_sizes, image_name, (final_location + "/mipmap-xhdpi")
 		process hdpi_image_sizes, image_name, (final_location + "/mipmap-hdpi")
 		process mdpi_image_sizes, image_name, (final_location + "/mipmap-mdpi")
@@ -479,8 +495,6 @@ class ImageProcessor
 		}
 
 		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/ic_language.png', final_location
-<<<<<<< HEAD
-
 
 		change_color 'images/android/about.png', color, 'about.png'
 		xxhdpi_image_sizes = {
@@ -598,126 +612,7 @@ class ImageProcessor
 	def self.process image_sizes, image_name, final_location
 		image = MiniMagick::Image.open("images/#{image_name}")
 
-=======
 
-
-		change_color 'images/android/about.png', color, 'about.png'
-		xxhdpi_image_sizes = {
-
-		 ["images/images-generated/android/about.png"] => "68x70",
-		}
-
-		xhdpi_image_sizes = {
-			["images/images-generated/android/about.png"] => "68x70",
-		}
-
-		hdpi_image_sizes = {
-			["images/images-generated/android/about.png"] => "34x35",
-		}
-		mdpi_image_sizes = {
-			["images/images-generated/android/about.png"] => "34x35",
-		}
-
-		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/about.png', final_location
-
-		change_color 'images/android/ic_action_cancel.png', color, 'ic_action_cancel.png'
-		xxhdpi_image_sizes = {
-
-		 ["images/images-generated/android/ic_action_cancel.png"] => "96x96",
-		}
-
-		xhdpi_image_sizes = {
-			["images/images-generated/android/ic_action_cancel.png"] => "64x64",
-		}
-
-		hdpi_image_sizes = {
-			["images/images-generated/android/ic_action_cancel.png"] => "34x35",
-		}
-		mdpi_image_sizes = {
-			["images/images-generated/android/ic_action_cancel.png"] => "34x35",
-		}
-
-		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/ic_action_cancel.png', final_location
-
-		change_color 'images/android/ic_search_white.png', color, 'ic_search_white.png'
-		xxhdpi_image_sizes = {
-
-		 ["images/images-generated/android/ic_search_white.png"] => "144x144",
-		}
-
-		xhdpi_image_sizes = {
-			["images/images-generated/android/ic_search_white.png"] => "96x96",
-		}
-
-		hdpi_image_sizes = {
-			["images/images-generated/android/ic_search_white.png"] => "72x72",
-		}
-		mdpi_image_sizes = {
-			["images/images-generated/android/ic_search_white.png"] => "48x48",
-		}
-
-		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/ic_search_white.png', final_location
-
-		change_color 'images/android/ic_share_white_48dp.png', color, 'ic_share_white_48dp.png'
-		xxhdpi_image_sizes = {
-
-		 ["images/images-generated/android/ic_share_white_48dp.png"] => "144x144",
-		}
-
-		xhdpi_image_sizes = {
-			["images/images-generated/android/ic_share_white_48dp.png"] => "96x96",
-		}
-
-		hdpi_image_sizes = {
-			["images/images-generated/android/ic_share_white_48dp.png"] => "72x72",
-		}
-		mdpi_image_sizes = {
-			["images/images-generated/android/ic_share_white_48dp.png"] => "48x48",
-		}
-
-		process_mipmap_images [xxhdpi_image_sizes, xhdpi_image_sizes, hdpi_image_sizes, mdpi_image_sizes], 'images-generated/android/ic_share_white_48dp.png', final_location
-
-		#1.) change the colors
-		#2.) size the files correctly
-		#3.) place them into the correct android mipmap folders
-		#copy from the header right below
-	end
-
-	def self.process_mipmap_images sizes, name, final_location
-		process sizes[0], name, (final_location + "/mipmap-xxhdpi")
-		process sizes[1], name, (final_location + "/mipmap-xhdpi")
-		process sizes[2], name, (final_location + "/mipmap-hdpi")
-		process sizes[3], name, (final_location + "/mipmap-mdpi")
-
-	end
-
-	def self.process_android_header_icon image_name, final_location
-		xxhdpi_image_sizes = {
-		 	["images/images-generated/android/logo.png"] => "800x128",
-		}
-
-		xhdpi_image_sizes = {
-			["images/images-generated/android/logo.png"] => "800x92",
-		}
-
-		hdpi_image_sizes = {
-			["images/images-generated/android/logo.png"] => "800x64",
-		}
-		mdpi_image_sizes = {
-			["images/images-generated/android/logo.png"] => "800x48",
-		}
-
-		process xxhdpi_image_sizes, image_name, (final_location + "/mipmap-xxhdpi")
-		process xhdpi_image_sizes, image_name, (final_location + "/mipmap-xhdpi")
-		process hdpi_image_sizes, image_name, (final_location + "/mipmap-hdpi")
-		process mdpi_image_sizes, image_name, (final_location + "/mipmap-mdpi")
-	end
-
-
-	def self.process image_sizes, image_name, final_location
-		image = MiniMagick::Image.open("images/#{image_name}")
-
->>>>>>> fe2f977d31077b847b8a3b2a5cff6aac5196b263
 		image_sizes.keys.each do |key|
 			key.each do |file_name|
 				image.resize image_sizes[key]
@@ -754,7 +649,6 @@ end
 def generateIOS options, version_number = "1.0", build_number = "1"
 
 	settings = Generator.generate options, version_number.strip!, build_number.strip!, :iOS
-<<<<<<< HEAD
 
 	if(options[:ios_path].empty?)
 		p "Current path is: #{Dir.pwd}"
@@ -827,7 +721,11 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			lane = "ios gen_test"
 			file_suffix = "beta"
 		end
-
+		
+		# The first time through we need to make sure that all the gems are installed in the iOS
+		# app repository.
+		p system("bundle install")
+		p system("bundle exec fastlane create") if(options[:new] == true)
 		p system("bundle exec fastlane #{lane}")
 	end
 
@@ -1030,280 +928,6 @@ def renameAndroidPackageFolders mode, identifier, project_path
 
 end
 
-=======
-
-	if(options[:ios_path].empty?)
-		p "Current path is: #{Dir.pwd}"
-		project_path = prompt "iOS Project Path: "
-		project_path.strip!
-	else
-		project_path = options[:ios_path]
-		p "iOS build path is #{project_path}"
-	end
-
-	if(File.exist?(project_path) == false)
-		p "iOS build path directory not found."
-		abort
-	end
-
-	keys_final_location = project_path + "/" + "Push"
-	FileUtils.cp("./ios/SecretKeys.plist", keys_final_location)
-	FileUtils.cp("./ios/CustomizedSettings.plist", keys_final_location)
-	FileUtils.cp("./ios/Info.plist", keys_final_location)
-	FileUtils.cp("./ios/project.pbxproj", project_path + "/Push.xcodeproj")
-	FileUtils.cp("./ios/Fastfile", project_path + "/fastlane")
-	FileUtils.cp("./ios/Appfile", project_path + "/fastlane")
-	FileUtils.cp("./ios/Snapfile", project_path + "/fastlane")
-
-	ImageProcessor.process_ios_logo settings['icon-large'], project_path + "/Push/Assets.xcassets/AppIcon.appiconset"
-	ImageProcessor.process_ios_logo settings['icon-large'], project_path + "/Push"
-	ImageProcessor.process_ios_header_icon settings['icon-navigation-bar'], project_path + "/Push"
-
-	solid_color_image = "images/images-generated/launch-background-color@3x.png"
-	ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
-	FileUtils.cp(solid_color_image, project_path + "/Push")
-
-	suffix = ""
-	if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
-		suffix = "-#{settings['suffix']}"
-	end
-
-	settings['languages'].each do |language|
-
-		about_file_path = project_path + "/Push/" + "about_text-#{language}.html"
-		if(File.file?(about_file_path))
-			File.delete(about_file_path)
-		end
-		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", about_file_path)
-	end
-
-	if(File.file?("promotions/promotions#{suffix}.yml"))
-		FileUtils.cp("promotions/promotions#{suffix}.yml", project_path + "/Assets/promotions.yml")
-	end
-
-	file_suffix = nil
-	Dir.chdir(project_path) do
-		if(options[:snapshot] == true)
-			p system('snapshot')
-			break
-		end
-		lane = nil
-
-		if(options[:offline] == true)
-			lane = "ios offline"
-			file_suffix = "offline"
-		elsif(options[:production] == true)
-			lane = "ios deploy"
-			file_suffix = "prod"
-		elsif(options[:beta] == true)
-			build_notes = prompt "Build notes?: "
-			lane = "ios beta notes:#{build_notes}"
-			file_suffix = "beta"
-		else
-			lane = "ios gen_test"
-			file_suffix = "beta"
-		end
-
-		p system("fastlane #{lane}")
-	end
-
-	Generator.copy_file(project_path + "/Push.ipa", "#{Dir.pwd}/finals/ios/#{binaryName(settings, file_suffix)}.ipa")
-end
-
-def generateAndroid options, version_number = "1.0", build_number = "1"
-
-	settings = Generator.generate options, version_number, build_number, :android, options[:production]
-
-	suffix = ""
-	if(settings['suffix'].nil? == false && settings['suffix'].empty? == false)
-		suffix = "-#{settings['suffix']}"
-	end
-
-	if(options[:android_path].empty?)
-		p "Current path is: #{Dir.pwd}"
-		project_path = prompt "Android Project Path: "
-		project_path.strip!
-	else
-		project_path = options[:android_path]
-		p "Android build path is #{project_path}"
-	end
-
-	if(File.exist?(project_path) == false)
-		p "Android base project directory not found."
-		abort
-	end
-
-	Generator.setAndroidTitle settings, project_path
-
-	keys_final_location = project_path + "/" + "app"
-
-	if(!File.file?("./google-service/google-services#{suffix}.json"))
-		pp "No google-services.json file found for #{settings['suffix']}".red
-		return
-	end
-
-	FileUtils.cp("./google-service/google-services#{suffix}.json", keys_final_location + "/google-services.json");
-
-	FileUtils.cp("./android/safe_variables.gradle", keys_final_location)
-	FileUtils.cp("./android/colors.xml", keys_final_location + "/src/main/res/values/")
-	FileUtils.cp("./android/AndroidManifest.xml", keys_final_location + "/src/main/")
-	FileUtils.cp("./android/AndroidManifestDebug.xml", keys_final_location + "/src/debug/AndroidManifest.xml")
-	FileUtils.cp("./android/build.gradle", keys_final_location)
-	FileUtils.cp("./android/Screengrabfile", keys_final_location + "/fastlane")
-
-	ImageProcessor.process_android_logo settings['icon-large'], project_path + "/app/src/main/res"
-	ImageProcessor.process_android_header_icon settings['icon-navigation-bar'], project_path + "/app/src/main/res"
-	ImageProcessor.process_android_button_images settings['navigation-text-color'], project_path + "/app/src/main/res"
-=begin
-	solid_color_image = "images/images-generated/launch-background-color@3x.png"
-	ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
-	FileUtils.cp(solid_color_image, project_path + "/Push")
-=end
-
-
-	settings['languages'].each do |language|
-		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/app/src/main/assets/" + "about_text-#{language}.html")
-	end
-
-	if(File.file?("promotions/promotions#{suffix}.yml"))
-		#since android <5.0 is terrible, we're switching to json parsing here
-
-		input_filename = "promotions/promotions#{suffix}.yml"
-		output_filename = input_filename.sub(/(yml|yaml)$/, 'json')
-
-		input_file = File.open(input_filename, 'r')
-		input_yml = input_file.read
-		input_file.close
-
-		output_json = JSON.dump(YAML::load(input_yml))
-
-		output_file = File.open(output_filename, 'w+')
-		output_file.write(output_json)
-		output_file.close
-		FileUtils.cp("promotions/promotions#{suffix}.json", project_path + "/app/src/main/assets/promotions.json")
-	end
-
-
-	#requires https://github.com/PushOCCRP/android-rename-package
-	p "Changing Android package name to #{settings['android-bundle-identifier']}"
-
-	renameAndroidImports project_path, settings['android-bundle-identifier']
-	#p exec("rp r #{project_path} --package-name #{settings['android-bundle-identifier']}")
-	renameAndroidPackageFolders 'main', settings['android-bundle-identifier'], project_path
-	renameAndroidPackageFolders 'test', settings['android-bundle-identifier'], project_path
-
-	#if(options[:snapshot] == true)
-	#	p exec('snapshot')
-	#	break
-	#end
-	#lane = nil
-
-	Dir.chdir(project_path) do
-		p system("gradle clean")
-		p system("gradle build")
-		p system("gradle assembleRelease")
-		#apk is here: app/build/outputs/apk/app-release.apk
-		#use fastlane to upload now
-	end
-
-	final_name_suffix = "_beta"
-	if(options[:offline] == true)
-		final_name_suffix = "offline"
-	elsif(options[:production] == true)
-		command = "supply init --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
-		p command
-		p system(command)
-		command = "supply --apk #{project_path}/app/build/outputs/apk/app-release.apk --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
-		p command
-		success = p system(command)
-		if(success == false)
-			puts "Error uploading APK, if this is the very first build of a new app you have to upload the APK file manually".white.on_red
-			puts "The production APK is found at #{project_path}/app/build/outputs/apk/app-release.apk".white.on_red
-			puts "Go to https://play.google.com/apps to create the application in the Google Play Store and upload the APK.".white.on_red
-		end
-		final_name_suffix = "_prod"
-		#lane = "ios deploy"
-	elsif(options[:beta] == true)
-		#build_notes = prompt "Build notes?: "
-		#lane = "ios beta notes:#{build_notes}"
-	end
-
-	Generator.copy_file("#{project_path}/app/build/outputs/apk/app-release.apk", "#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk")
-	#p exec("fastlane #{lane}")
-end
-
-def binaryName settings, suffix
-	return "#{settings['short-name']}_#{Time.now.strftime("%Y%m%d_%H%M%S")}_#{suffix}"
-end
-
-def renameAndroidImports project_path, identifier
-	Find.find(project_path) do |path|
-	  if FileTest.directory?(path)
-	    if File.basename(path)[0] == ?.
-	      Find.prune       # Don't look any further into this directory.
-	    else
-	      next
-	    end
-	  elsif File.extname(path) == ".java" || File.extname(path) == '.xml'
-		text = File.read(path)
-		text.gsub!(/com.push.[A-z]*/, identifier)
-		File.write(path, text)
-	  else
- 		#cleaning...
-	  	if(File.basename(path) == '.byebug_history')
-	  		FileUtils.rm path
-	  	end
- 	  end
-	end
-
-
-end
-
-def renameAndroidPackageFolders mode, identifier, project_path
-	path = nil
-	case mode
-	when "main"
-		path = '/app/src/main/java/'
-	when "test"
-		path = '/app/src/androidTest/java/'
-	end
-
-	identifier_parts = identifier.split('.')
-	identifier_parts.insert 0, ""
-
-	identifier_parts.each do |part|
-		part_index = identifier_parts.find_index(part)
-		item_index = part_index + 1
-		if(identifier_parts.count > item_index)
-
-			i = 0
-			finished_path = project_path + path
-			until i > part_index
-				finished_path += identifier_parts[i] + "/"
-				i += 1
-			end
-
-			Dir.chdir(finished_path) do
-				directories = Dir['*/'] 
-				start_dir = Dir.pwd + "/" + directories[0]
-				end_dir = Dir.pwd + "/" + identifier_parts[item_index] + "/"
-
-				p "Chaging #{start_dir} to #{end_dir}"
-
-				if(start_dir != end_dir)
-					begin
-						FileUtils.mv(start_dir, end_dir)
-					rescue Exception => e
-						byebug
-					end
-				end
-			end
-		end
-	end
-
-end
-
->>>>>>> fe2f977d31077b847b8a3b2a5cff6aac5196b263
 options = Parser.parse ARGV
 
 ios_version_number = "1.0"
@@ -1325,7 +949,6 @@ when "android"
 
 	generateAndroid options, android_version_number, android_build_number
 when "ios"
-
 	if(options[:production] == true || options[:beta] == true)
 		ios_version_number = prompt "iOS Version number: "
 		ios_build_number = prompt "iOS Build number: "
@@ -1339,6 +962,7 @@ else
 	end
 
 	if(options[:production] == true || options[:beta] == true)
+		puts "Link to Google Developer Console (I always need to be reminded): https://play.google.com/apps/publish/"
 		android_version_number = prompt "Android Version number: "
 		android_build_number = prompt "Android Build number: "
 		android_version_number.strip!
@@ -1349,7 +973,7 @@ else
 	end
 
 	generateIOS options, ios_version_number, ios_build_number
-	generateAndroid options	android_version_number, android_build_number
+	generateAndroid options, android_version_number, android_build_number
 end
 
 

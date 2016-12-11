@@ -23,7 +23,10 @@ default_platform :ios
 
 platform :ios do
   before_all do |lane, options|
-    if(lane != :offline)
+
+    clear_derived_data
+
+    if(lane != :offline && lane != :add_devices && lane != :create)
       cocoapods 
       <% if settings[:build_number].nil? || settings[:build_number].empty? %>
         increment_build_number()
@@ -40,6 +43,16 @@ platform :ios do
     snapshot
   end
   
+  desc "Creates App"
+  lane :create do
+    produce(
+      username: "cguess@icfj.org",
+      app_identifier: "<%= settings['ios-bundle-identifier'] %>",
+      app_name: "<%= settings['name'] %>",
+      language: "<%= settings[:language_names].join(",") %>"
+    )
+  end
+
   desc "Adds devices"
   lane :add_devices do
     register_devices(
@@ -105,12 +118,14 @@ platform :ios do
       scheme: 'Push',
       
     ) # Build your app - more options available
-    hockey(
-      api_token: "<%= settings[:credentials]['hockey-secret'] %>",
-      notes: options[:notes],
-      #public_identifier: "<%= settings[:credentials]['hockey-key'] %>"
+    #hockey(
+    #  api_token: "<%= settings[:credentials]['hockey-secret'] %>",
+    #  notes: options[:notes],
+    #  #public_identifier: "<%= settings[:credentials]['hockey-key'] %>"
+    #)
+    pilot(
+      changelog: options[:notes]
     )
-    #pilot
 
     # sh "your_script.sh"
     # You can also use other beta testing services here
@@ -132,16 +147,16 @@ platform :ios do
     gym(
         scheme: "Push",
 	      use_legacy_build_api: true,
-	      clean: true
+	      clean: true,
+        include_symbols: true,
+        include_bitcode: true,
     )
     deliver(
     	force: true,
     	username: "cguess@icfj.org",
     )
-    #frameit
-  end
 
-  # You can define as many lanes as you want
+  end
 
   after_all do |lane|
     # This block is called, only if the executed lane was successful
