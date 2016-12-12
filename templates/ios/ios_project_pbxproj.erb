@@ -162,6 +162,7 @@
 		9D8D33361C610C5E0053FE3E /* NSMutableAttributedString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString+HTML.m"; sourceTree = "<group>"; };
 		9D9147E01D67549E0089FD03 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		9D9147E11D67549E0089FD03 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		9D98A4421DFE13BC0097DF06 /* Push.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Push.entitlements; sourceTree = "<group>"; };
 		9D9D346B1D170B6600300529 /* NotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationManager.h; sourceTree = "<group>"; };
 		9D9D346C1D170B6600300529 /* NotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationManager.m; sourceTree = "<group>"; };
 		9DAC1DF21C57048E00126A83 /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
@@ -624,6 +625,7 @@
 		9DE4A1001BE2531E00B69170 /* Push */ = {
 			isa = PBXGroup;
 			children = (
+				9D98A4421DFE13BC0097DF06 /* Push.entitlements */,
 				9D8D332F1C5FABEE0053FE3E /* Categories */,
 				9DCC79841BF375C000F28F18 /* Managers */,
 				9DE4A1461BE2666400B69170 /* Models */,
@@ -1287,8 +1289,9 @@
 			baseConfigurationReference = 56238ADECDA5C2AEF1436CA9 /* Pods-Push.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Push/Push.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 9H5K42BU9H;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1319,7 +1322,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = <%= settings['ios-bundle-identifier'] %>;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "4005866c-e15b-4f8e-99c8-6673f0c300ff";
-				PROVISIONING_PROFILE_SPECIFIER = "<%= settings['ios-bundle-identifier'] %> Development";
+				PROVISIONING_PROFILE_SPECIFIER = "com.occrp.meydan Development";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1329,8 +1332,9 @@
 			baseConfigurationReference = 6C35FD7A9ADC79A2128465A9 /* Pods-Push.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Push/Push.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 9H5K42BU9H;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1361,7 +1365,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = <%= settings['ios-bundle-identifier'] %>;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "a7ff1f9d-b2b3-4db4-a3bc-8db2387f2bc2";
-				PROVISIONING_PROFILE_SPECIFIER = "<%= settings['ios-bundle-identifier'] %> AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "com.occrp.meydan AppStore";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
