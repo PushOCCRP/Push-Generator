@@ -4,4 +4,5 @@ source 'https://rubygems.org' do
   gem "colorize"
   gem "fastlane"
   gem "byebug"
+  gem "commander"
 end

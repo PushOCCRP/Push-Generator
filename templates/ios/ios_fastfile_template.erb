@@ -27,7 +27,7 @@ platform :ios do
     clear_derived_data
 
     if(lane != :offline && lane != :add_devices && lane != :create)
-      cocoapods 
+      #cocoapods 
       <% if settings[:build_number].nil? || settings[:build_number].empty? %>
         increment_build_number()
       <% else %>
@@ -46,7 +46,7 @@ platform :ios do
   desc "Creates App"
   lane :create do
     produce(
-      username: "cguess@icfj.org",
+      username: "<%= settings[:credentials]['apple-developer-email']%>",
       app_identifier: "<%= settings['ios-bundle-identifier'] %>",
       app_name: "<%= settings['name'] %>",
       language: "<%= settings[:language_names].join(",") %>"
@@ -57,25 +57,52 @@ platform :ios do
   lane :add_devices do
     register_devices(
         devices: {
-            "Paul Radu" => "8d1e5d1eba61f2d0794c8868ae0ea8cc14d07eab"
+            "Christopher Guess" => "b725c07c5e9799a9f824d544abc2534d9d317884"
         }
     )
   end
 
-  desc "Used to test the generator"
-  lane :gen_test do |options|
+  desc "Creates development and stuff"
+  lane :bootstrap do |options|
     cert(
-      username: 'cguess@icfj.org',
+      username: '<%= settings[:credentials]['apple-developer-email']%>',
+      development: true
     )
+
     sigh(
-      adhoc: true,
+      development: true,
       force: true,
-      username: "cguess@icfj.org",
+      username: "<%= settings[:credentials]['apple-developer-email']%>",
       app_identifier: "<%= settings['ios-bundle-identifier'] %>"
     )
     
     # use the UID of the newly created provisioning profile
-    ENV["PROFILE_UUID"] = lane_context[SharedValues::SIGH_UDID]
+    # ENV["PROFILE_UUID"] = lane_context[SharedValues::SIGH_UDID]
+
+    update_project_provisioning(
+    )
+
+  end
+
+
+  desc "Used to test the generator"
+  lane :gen_test do |options|
+    cert(
+      username: '<%= settings[:credentials]['apple-developer-email']%>',
+    )
+
+    sigh(
+      adhoc: true,
+      force: true,
+      username: "<%= settings[:credentials]['apple-developer-email']%>",
+      app_identifier: "<%= settings['ios-bundle-identifier'] %>"
+    )
+    
+    # use the UID of the newly created provisioning profile
+    # ENV["PROFILE_UUID"] = lane_context[SharedValues::SIGH_UDID]
+
+    update_project_provisioning(
+    )
 
     gym(
       use_legacy_build_api: true,
@@ -100,17 +127,20 @@ platform :ios do
   desc "This will also make sure the profile is up to date"
   lane :beta do |options|
     cert(
-      username: 'cguess@icfj.org',
+      username: '<%= settings[:credentials]['apple-developer-email']%>',
     )
     sigh(
       adhoc: true,
       force: true,
-      username: "cguess@icfj.org",
+      username: "<%= settings[:credentials]['apple-developer-email']%>",
       app_identifier: "<%= settings['ios-bundle-identifier'] %>"
     )
     
     # use the UID of the newly created provisioning profile
     ENV["PROFILE_UUID"] = lane_context[SharedValues::SIGH_UDID]
+
+    update_project_provisioning(
+    )
 
     gym(
       use_legacy_build_api: true,
@@ -136,14 +166,18 @@ platform :ios do
     increment_version_number(version_number:<%= "'#{settings[:version_number]}'" %>)
     #ensure_no_debug_code(text: "NSLog")
     cert(
-      username: 'cguess@icfj.org',
+      username: '<%= settings[:credentials]['apple-developer-email']%>',
     )
     #snapshot
     sigh(
-	force: true,
-    	username: "cguess@icfj.org",
+	    force: true,
+    	username: "<%= settings[:credentials]['apple-developer-email']%>",
     	app_identifier: "<%= settings['ios-bundle-identifier'] %>",
     )
+
+    update_project_provisioning(
+    )
+
     gym(
         scheme: "Push",
 	      use_legacy_build_api: true,
@@ -153,7 +187,7 @@ platform :ios do
     )
     deliver(
     	force: true,
-    	username: "cguess@icfj.org",
+    	username: "<%= settings[:credentials]['apple-developer-email']%>",
     )
 
   end

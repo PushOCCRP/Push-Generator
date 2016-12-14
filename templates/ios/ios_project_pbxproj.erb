@@ -925,7 +925,7 @@
 				TargetAttributes = {
 					9DE4A0FD1BE2531D00B69170 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = 9H5K42BU9H;
+						DevelopmentTeam = <%= settings[:credentials]['apple-developer-team-id']%>;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Push = {
@@ -1321,8 +1321,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = <%= settings['ios-bundle-identifier'] %>;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4005866c-e15b-4f8e-99c8-6673f0c300ff";
-				PROVISIONING_PROFILE_SPECIFIER = "com.occrp.meydan Development";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1335,7 +1335,7 @@
 				CODE_SIGN_ENTITLEMENTS = Push/Push.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = 9H5K42BU9H;
+				DEVELOPMENT_TEAM = <%= settings[:credentials]['apple-developer-team-id']%>;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Push",
@@ -1364,8 +1364,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = <%= settings['ios-bundle-identifier'] %>;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "a7ff1f9d-b2b3-4db4-a3bc-8db2387f2bc2";
-				PROVISIONING_PROFILE_SPECIFIER = "com.occrp.meydan AppStore";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

@@ -11,8 +11,14 @@ require 'find'
 require 'mini_magick'
 require 'pp'
 require 'colorize'
+require 'commander/import'
+require 'open3'
 
-Options = Struct.new(:file_name, :production, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new)
+program :name, 'Push App Generator'
+program :version, '1.0.0'
+program :description, 'A script to automatically generate iOS and Android apps for the Push ecosystem'
+
+Options = Struct.new(:file_name, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new)
 
 Languages = { "az": "Azerbaijnai",
 			  "bg": "Bulgaria",
@@ -45,6 +51,10 @@ class Parser
       opts.on("-b", "--beta", "Flag for beta push") do
       	args.beta = true
       end
+
+			opts.on("-d", "--development", "Flag to set up an initial development version for using in XCode") do
+				args.development = true
+			end
 
       opts.on("-o", "--offline", "Flag for testing when offline, supercedes beta/production flags") do
       	args.offline = true
@@ -224,7 +234,7 @@ class Generator
 	end
 
 	def self.verify_credentials_format credentials
-		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'hockey-secret', 'uniqush', 'play-store-app-number', 'fabric-key']
+		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'hockey-secret', 'uniqush', 'play-store-app-number', 'fabric-key', 'apple-developer-email']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, credentials)
 		end
@@ -710,6 +720,9 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 		if(options[:offline] == true)
 			lane = "ios offline"
 			file_suffix = "offline"
+		elsif(options[:development] == true)
+			lane = "ios bootstrap"
+			file_suffix = "dev"
 		elsif(options[:production] == true)
 			lane = "ios deploy"
 			file_suffix = "prod"
@@ -726,10 +739,85 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 		# app repository.
 		p system("bundle install")
 		p system("bundle exec fastlane create") if(options[:new] == true)
-		p system("bundle exec fastlane #{lane}")
+		loop do
+			cmd = "bundle exec fastlane #{lane}"
+			status = true
+			error = nil
+			exit_status = nil
+			Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+				while line = stdout.gets
+					puts line
+					if line.include?("Could not find App with App Identifier")
+						status = false
+						error = :no_app 
+					elsif line.include?("Missing password for user")
+						status = false
+						error = :missing_password
+					end
+				end
+			  exit_status = wait_thr.value
+			end
+
+			if(!status)
+				case error
+				when :no_app
+					say "It seems as if the app doesn't exist yet on your Apple developer account"
+					should_continue = agree "Would you like to add it [yes/no]?: "
+				when :missing_password
+					add_apple_developer_user settings[:credentials]['apple-developer-email']
+					should_continue = true
+				else
+					p "Unknown error occured. Please file a bug report at https://github.com/PushOCCRP/Push-Generator"
+					should_continue = false
+				end
+				
+				exit if should_continue == false
+
+				add_appple_developer_app settings
+			else
+				exit unless exit_status.success?
+	  		break;
+			end
+		end
 	end
 
 	Generator.copy_file(project_path + "/Push.ipa", "#{Dir.pwd}/finals/ios/#{binaryName(settings, file_suffix)}.ipa")
+end
+
+def add_appple_developer_app settings
+	cmd = "produce -q '#{settings['name']}' -c '#{settings['company-name']}'"
+	status = true
+	exit_status = nil
+	Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+		while line = stdout.gets
+			puts line
+			status = false if line.include?("Missing password for user")
+		end
+		exit_status = wait_thr.value
+	end
+
+	if(!status)
+		add_appple_developer_user settings[:credentials]['apple-developer-email']
+	else
+		exit unless exit_status.success?
+	end
+end
+
+def add_apple_developer_user email
+	say "Please login to your Apple Developer Account: #{email}".green
+	password = ask("Password:  ") { |q| q.echo = "*" }
+	cmd = "fastlane-credentials add --username #{email} --password #{password}"
+	status = false
+	Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+		while line = stdout.gets
+			puts line
+			status = true if line.include?("added to keychain.")
+		end
+		exit_status = wait_thr.value
+		exit unless exit_status.success?
+	end
+
+	p "Added #{email} to your keychain."
 end
 
 def generateAndroid options, version_number = "1.0", build_number = "1"
@@ -833,6 +921,8 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	final_name_suffix = "_beta"
 	if(options[:offline] == true)
 		final_name_suffix = "offline"
+	elsif(options[:development] == true)
+		final_name_suffix = "dev"
 	elsif(options[:production] == true)
 		command = "supply init --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
 		p command
