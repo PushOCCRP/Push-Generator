@@ -714,7 +714,19 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 		if(File.file?(about_file_path))
 			File.delete(about_file_path)
 		end
-		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", about_file_path)
+
+		begin
+			FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", about_file_path)
+		rescue
+			say "\n-----------------------------------------------------------------".red
+			say "    Error:\n".red
+			say "    No " + "about-html/about_text-#{language}#{suffix}.html".yellow + " file found for "+"#{settings['suffix']}".green
+			say "    This is because you have not added the about.html file for the language "+ Languages[language.to_sym].green+"."
+			say "\n"
+			say "    Please create the about file and try running this again."
+			say "-----------------------------------------------------------------\n".red
+			exit
+		end
 	end
 
 	if(File.file?("promotions/promotions#{suffix}.yml"))
@@ -867,7 +879,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		say "\n"
 		say "    Instructions can be found in the README.md files, but here are some tips:"
 		say "    You can create your App in the Firebase console at " + "https://console.firebase.google.com".blue
-		say "    Next, click 'create Android app' and fill in the details"
+		say "    Next, click 'Add Firebase to your Android app' and fill in the details"
 		say "    Copy the "+"google-services.json".green + " file to the "+"./google-services".green + " folder in this repository"
 		say "-----------------------------------------------------------------\n".red
 		return

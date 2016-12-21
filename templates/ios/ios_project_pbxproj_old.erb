@@ -1,4 +1,3 @@
-
 // !$*UTF8*$!
 {
 	archiveVersion = 1;
@@ -209,6 +208,7 @@
 		9DD418071C46E35D000D6DC8 /* az */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = az; path = az.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9DD418091C46F131000D6DC8 /* LanguagePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LanguagePickerView.h; sourceTree = "<group>"; };
 		9DD4180A1C46F131000D6DC8 /* LanguagePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LanguagePickerView.m; sourceTree = "<group>"; };
+		9DDA3FAE1E09FFA8005F4A0A /* bs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bs; path = bs.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9DDBE7041C46E16700D2A7E5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9DE0EE151D3BFE7F0061BEA1 /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9DE0EE161D3C04310061BEA1 /* about_text-bg.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "about_text-bg.html"; path = "Assets/About Html Files/about_text-bg.html"; sourceTree = SOURCE_ROOT; };
@@ -957,6 +957,7 @@
 				ro,
 				sr,
 				bg,
+				bs,
 			);
 			mainGroup = 9DE4A0F51BE2531D00B69170;
 			productRefGroup = 9DE4A0FF1BE2531E00B69170 /* Products */;
@@ -1194,6 +1195,7 @@
 				9DF86A941C85D9E30074F22B /* ro */,
 				9DF88ED91D08D3C600F87C23 /* sr */,
 				9DE0EE151D3BFE7F0061BEA1 /* bg */,
+				9DDA3FAE1E09FFA8005F4A0A /* bs */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1292,7 +1294,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Push/Push.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = <%= settings[:credentials]['apple-developer-team-id']%>;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1322,7 +1324,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = <%= settings['ios-bundle-identifier'] %>;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "26ee68c9-dd26-4c36-897f-b984cc71f88f";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1335,7 +1337,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Push/Push.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = <%= settings[:credentials]['apple-developer-team-id']%>;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1365,7 +1367,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = <%= settings['ios-bundle-identifier'] %>;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "26ee68c9-dd26-4c36-897f-b984cc71f88f";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1379,6 +1381,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = whatisuplabs.PushTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "26ee68c9-dd26-4c36-897f-b984cc71f88f";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Push.app/Push";
 			};
 			name = Debug;
@@ -1391,6 +1394,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = whatisuplabs.PushTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "26ee68c9-dd26-4c36-897f-b984cc71f88f";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Push.app/Push";
 			};
 			name = Release;
@@ -1403,6 +1407,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = whatisuplabs.PushUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "26ee68c9-dd26-4c36-897f-b984cc71f88f";
 				SWIFT_OBJC_BRIDGING_HEADER = "PushUITests/PushUITests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1419,6 +1424,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = whatisuplabs.PushUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "26ee68c9-dd26-4c36-897f-b984cc71f88f";
 				SWIFT_OBJC_BRIDGING_HEADER = "PushUITests/PushUITests-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Push;
@@ -1469,3 +1475,8 @@
 	};
 	rootObject = 9DE4A0F61BE2531D00B69170 /* Project object */;
 }
+
+
+
+
+
