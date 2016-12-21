@@ -20,7 +20,6 @@ fastlane_version "1.48.0"
 
 default_platform :ios
 
-
 platform :ios do
   before_all do |lane, options|
 
@@ -44,12 +43,15 @@ platform :ios do
   end
   
   desc "Creates App"
+
+
+
   lane :create do
     produce(
       username: "<%= settings[:credentials]['apple-developer-email']%>",
       app_identifier: "<%= settings['ios-bundle-identifier'] %>",
       app_name: "<%= settings['name'] %>",
-      language: "<%= settings[:language_names].join(",") %>"
+      language: "<%= settings[:itunes_languages].join(",") %>"
     )
   end
 
@@ -74,7 +76,7 @@ platform :ios do
       app_identifier: "<%= settings['ios-bundle-identifier'] %>",
       company_name: "<%= settings['company-name'] %>",
       app_name: "<%= settings['name'] %>",
-      language: "<%= settings[:language_names].join(",") %>"
+      language: "<%= settings[:itunes_languages].join(",") %>"
     )
 
     sigh(
@@ -115,7 +117,7 @@ platform :ios do
     )
 
     gym(
-      use_legacy_build_api: true,
+      #use_legacy_build_api: true,
       clean: true,
       scheme: 'Push',
     )
@@ -127,7 +129,7 @@ platform :ios do
     ENV["PROFILE_UUID"] = lane_context[SharedValues::SIGH_UDID]
 
     gym(
-      use_legacy_build_api: true,
+      #use_legacy_build_api: true,
       clean: true,
       scheme: 'Push',
     )
@@ -152,7 +154,7 @@ platform :ios do
     )
 
     gym(
-      use_legacy_build_api: true,
+      #use_legacy_build_api: true,
       clean: true,
       scheme: 'Push',
       
@@ -189,7 +191,7 @@ platform :ios do
 
     gym(
         scheme: "Push",
-	      use_legacy_build_api: true,
+	      #use_legacy_build_api: true,
 	      clean: true,
         include_symbols: true,
         include_bitcode: true,

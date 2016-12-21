@@ -22,6 +22,7 @@ Options = Struct.new(:file_name, :production, :development, :snapshot, :beta, :m
 
 Languages = { "az": "Azerbaijnai",
 			  "bg": "Bulgaria",
+				"bs": "Bosnian",
 			  "en": "English",
 			  "ka": "Georgian",
 			  "ro": "Romanian",
@@ -113,6 +114,7 @@ class Generator
 		settings[:build_number] = build_number
 		settings[:version_number] = version_number
 		settings[:language_names] = parse_languages settings['languages']
+		settings[:itunes_languages] = handle_apple_languages settings['languages']
 		if(!settings['default_language'].nil? && settings['default_language'].empty?)
 			settings[:default_language_name] = settings[:language_names].first
 		else
@@ -219,11 +221,11 @@ class Generator
 		end
 
 		if(settings.has_key?('icon-background-color') == false)
-			settings['icon-background-color'] = '#FFFFFFF'
+			settings['icon-background-color'] = '#FFFFFF'
 		end
 
 		if(settings.has_key?('launch-background-color') == false)
-			settings['launch-background-color'] = '#FFFFFFF'
+			settings['launch-background-color'] = '#FFFFFF'
 		end
 
 		if(settings.has_key?('credentials-file') == false)
@@ -234,7 +236,7 @@ class Generator
 	end
 
 	def self.verify_credentials_format credentials
-		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'hockey-secret', 'uniqush', 'play-store-app-number', 'fabric-key', 'apple-developer-email']
+		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'hockey-secret', 'uniqush', 'play-store-app-number', 'fabric-key', 'apple-developer-email','apple-developer-team-id']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, credentials)
 		end
@@ -278,6 +280,16 @@ class Generator
 		end
 
 		return language_strings
+	end
+
+	def self.handle_apple_languages languages
+		  # So Apple supports a lot less languages on the app store than it does in ios
+  # This makes sure that we don't accidently try to register a wrong language
+  # If there's none, we default to general "English"
+  available_languages = ["Brazilian Portuguese", "Danish", "Dutch", "English", "English_Australian", "English_CA", "English_UK", "Finnish", "French", "French_CA", "German", "Greek", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Portuguese", "Russian", "Simplified Chinese", "Spanish", "Spanish_MX", "Swedish", "Thai", "Traditional Chinese", "Turkish", "Vietnamese"]
+  languages = languages.map{|language| Languages[language.to_sym] if available_languages.include?(Languages[language.to_sym])}.compact
+  languages = ['English'] if languages.empty?
+	return languages
 	end
 
 	def self.generateiOSSettingsFile settings
@@ -660,7 +672,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 
 	settings = Generator.generate options, version_number.strip!, build_number.strip!, :iOS
 
-	if(options[:ios_path].empty?)
+	if(options[:ios_path].nil? || options[:ios_path].empty?)
 		p "Current path is: #{Dir.pwd}"
 		project_path = prompt "iOS Project Path: "
 		project_path.strip!
@@ -848,7 +860,16 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	keys_final_location = project_path + "/" + "app"
 
 	if(!File.file?("./google-service/google-services#{suffix}.json"))
-		pp "No google-services.json file found for #{settings['suffix']}".red
+		say "\n-----------------------------------------------------------------".red
+		say "    Error:\n".red
+		say "    No " + "google-services.json".yellow + " file found for "+"#{settings['suffix']}".green
+		say "    You probably need to create one still."
+		say "\n"
+		say "    Instructions can be found in the README.md files, but here are some tips:"
+		say "    You can create your App in the Firebase console at " + "https://console.firebase.google.com".blue
+		say "    Next, click 'create Android app' and fill in the details"
+		say "    Copy the "+"google-services.json".green + " file to the "+"./google-services".green + " folder in this repository"
+		say "-----------------------------------------------------------------\n".red
 		return
 	end
 
