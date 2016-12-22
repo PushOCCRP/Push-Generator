@@ -1,7 +1,6 @@
 # Push Generator - v1.0
 # ©Christopher Guess/ICFJ 2016 
 require 'optparse'
-require 'pp'
 require 'byebug'
 require 'yaml'
 require 'json'
@@ -121,6 +120,21 @@ class Generator
 			settings[:default_language_name] = Languages[settings['default_language']]
 		end
 
+		# Check if the images coming in are the proper ratios
+		if !ImageProcessor.check_image_is_square settings['icon-large']
+			message = []
+			message << "The icon image " + settings['icon-large'].yellow + " is not square."
+			message << "Please crop the image so that it is the same height as width before proceeding."
+			error message
+		end
+
+		if !ImageProcessor.check_image_is_longer_than_wide settings['icon-navigation-bar']
+			message = []
+			message << "The icon image " + settings['icon-large'].yellow + " must be wider than tall."
+			message << "Please rotate or resize the image so that it is wider than tall."
+			error message
+		end
+
 		settings[:debug] = !production
 #		pp settings
 		#5.) Parse file into iOS format
@@ -183,21 +197,6 @@ class Generator
 	end
 
 	def self.verify_settings_format settings
-=begin
-		Proper format:
-
-		{"name"=>"Publisher's Test",
-		 "short-name"=>"PubTest",
-		 "languages"=>["en", "ro", "ru"],
-		 "default-langauage"=>"en",
-		 "icon-large"=>"icon-large.png",
-		 "icon-small"=>"icon-small.png",
-		 "icon-background-color"=>"#000000",
-		 "launch-background-color"=>"#454545",
-		 "navigation-bar-color"=>"#454545",
-		 "navigation-text-color"=>"#000000",
-		 "credentials-file"=>"creds.yml"}
-=end
 		settings_to_verify = ['name', 'short-name', 'ios-bundle-identifier', 'languages', 'icon-large', 'icon-navigation-bar', 'navigation-bar-color', 'navigation-text-color']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, settings)
@@ -242,15 +241,6 @@ class Generator
 		end
 
 		return credentials
-=begin
-		{"server-url"=>"https://push-occrp.herokuapp.com",
-		 "origin-url"=>"https://www.occrp.org",
-		 "hockey-key"=>"xxxxxxxxxxxxxxxxxxx",
-		 "infobip-application-id"=>"xxxxxxxxxx",
-		 "infobip-application-secret"=>"xxxxxxxxxxxxx",
-		 "play-store-app-number"=>"xxxxxxxxxxxxxxxxx",
-		 "youtube-access-key"=>"xxxxxxxxxxxxxxxxx"}
-=end
 	end
 
 	def self.check_for_setting setting_name, settings
@@ -439,6 +429,20 @@ class Generator
 end
 
 class ImageProcessor
+	def self.check_image_is_square image_name
+		image = MiniMagick::Image.open("images/#{image_name}")
+		raise "Image not found at images/#{image_name}" if image.nil?
+
+		return image.dimensions[0] == image.dimensions[1] ? true : false
+	end
+	
+	def self.check_image_is_longer_than_wide image_name
+		image = MiniMagick::Image.open("images/#{image_name}")
+		raise "Image not found at images/#{image_name}" if image.nil?
+
+		return image.dimensions[0] > image.dimensions[1] ? true : false
+	end
+
 	def self.process_ios_logo image_name, final_location
 		image_sizes = {
 		 ["images/images-generated/ios/app-store-icon.png"] => "1024x1024",
@@ -718,14 +722,12 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 		begin
 			FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", about_file_path)
 		rescue
-			say "\n-----------------------------------------------------------------".red
-			say "    Error:\n".red
-			say "    No " + "about-html/about_text-#{language}#{suffix}.html".yellow + " file found for "+"#{settings['suffix']}".green
-			say "    This is because you have not added the about.html file for the language "+ Languages[language.to_sym].green+"."
-			say "\n"
-			say "    Please create the about file and try running this again."
-			say "-----------------------------------------------------------------\n".red
-			exit
+			message = []	
+			message << "    No " + "about-html/about_text-#{language}#{suffix}.html".yellow + " file found for "+"#{settings['suffix']}".green
+			message << "    This is because you have not added the about.html file for the language "+ Languages[language.to_sym].green+"."
+			message << "\n"
+			message << "    Please create the about file and try running this again."
+			error message
 		end
 	end
 
@@ -872,16 +874,15 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	keys_final_location = project_path + "/" + "app"
 
 	if(!File.file?("./google-service/google-services#{suffix}.json"))
-		say "\n-----------------------------------------------------------------".red
-		say "    Error:\n".red
-		say "    No " + "google-services.json".yellow + " file found for "+"#{settings['suffix']}".green
-		say "    You probably need to create one still."
-		say "\n"
-		say "    Instructions can be found in the README.md files, but here are some tips:"
-		say "    You can create your App in the Firebase console at " + "https://console.firebase.google.com".blue
-		say "    Next, click 'Add Firebase to your Android app' and fill in the details"
-		say "    Copy the "+"google-services.json".green + " file to the "+"./google-services".green + " folder in this repository"
-		say "-----------------------------------------------------------------\n".red
+		message = []	
+		message << "    No " + "google-services.json".yellow + " file found for "+"#{settings['suffix']}".green
+		message << "    You probably need to create one still."
+		message << "\n"
+		message << "    Instructions can be found in the README.md files, but here are some tips:"
+		message << "    You can create your App in the Firebase console at " + "https://console.firebase.google.com".blue
+		message << "    Next, click 'Add Firebase to your Android app' and fill in the details"
+		message << "    Copy the "+"google-services.json".green + " file to the "+"./google-services".green + " folder in this repository"
+		error message
 		return
 	end
 
@@ -904,7 +905,6 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	ImageProcessor.generateSolidColor settings['launch-background-color'], solid_color_image
 	FileUtils.cp(solid_color_image, project_path + "/Push")
 =end
-
 
 	settings['languages'].each do |language|
 		FileUtils.cp("about-html/about_text-#{language}#{suffix}.html", project_path + "/app/src/main/assets/" + "about_text-#{language}.html")
@@ -964,9 +964,11 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		p command
 		success = p system(command)
 		if(success == false)
-			puts "Error uploading APK, if this is the very first build of a new app you have to upload the APK file manually".white.on_red
-			puts "The production APK is found at #{project_path}/app/build/outputs/apk/app-release.apk".white.on_red
-			puts "Go to https://play.google.com/apps to create the application in the Google Play Store and upload the APK.".white.on_red
+			message = []
+			message << "Error uploading APK, if this is the very first build of a new app you have to upload the APK file manually".white.on_red
+			message << "The production APK is found at #{project_path}/app/build/outputs/apk/app-release.apk".white.on_red
+			message << "Go to https://play.google.com/apps to create the application in the Google Play Store and upload the APK.".white.on_red
+			error message, false
 		end
 		final_name_suffix = "_prod"
 		#lane = "ios deploy"
@@ -1042,13 +1044,28 @@ def renameAndroidPackageFolders mode, identifier, project_path
 					begin
 						FileUtils.mv(start_dir, end_dir)
 					rescue Exception => e
-						byebug
+						message = []
+						message << "Copying Android folders raised an error:"
+						message << e
+						error message
 					end
 				end
 			end
 		end
 	end
 
+end
+
+# This takes in a message, that can be a string or an array of string, each will be printed on a different line
+def error message, exit_on_print = true
+		raise "Error message only takes 'String' or 'Array'" if !message.is_a?(Array) && !message.is_a?(String)
+
+		say "\n-----------------------------------------------------------------".red
+		say "    Error:\n".red
+		say "    " + message if message.is_a?(String)
+		message.each {|line| say "    " + line } if message.is_a?(Array)
+		say "-----------------------------------------------------------------\n".red
+		exit if exit_on_print
 end
 
 options = Parser.parse ARGV
@@ -1098,6 +1115,3 @@ else
 	generateIOS options, ios_version_number, ios_build_number
 	generateAndroid options, android_version_number, android_build_number
 end
-
-
-
