@@ -1029,10 +1029,11 @@ def renameAndroidPackageFolders mode, identifier, project_path
 			i = 0
 			finished_path = project_path + path
 			until i > part_index
-				finished_path += identifier_parts[i] + "/"
+				finished_path += identifier_parts[i]
+				finished_path += "/" unless finished_path.end_with? "/"
 				i += 1
 			end
-
+			
 			Dir.chdir(finished_path) do
 				directories = Dir['*/'] 
 				start_dir = Dir.pwd + "/" + directories[0]
