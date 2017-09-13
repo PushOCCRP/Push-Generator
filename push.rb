@@ -420,7 +420,7 @@ class Generator
 		folders.each do |folder|
 			path = root_path + "/app/src/main/res/" + folder + "/strings.xml"
 			text = File.read(path)
-			replaced_text = text.gsub /<string name=\"app_name\">[A-z\s]*<\/string>/, "<string name=\"app_name\">#{settings['name']}<\/string>"
+			replaced_text = text.gsub(/<string name=\"app_name\">[A-z0-9\s]*<\/string>/, "<string name=\"app_name\">#{settings['name']}<\/string>")
 			tmp_file_path = 'templates/android/strings/' + folder + '_strings.xml'
 			File.write(tmp_file_path, replaced_text)
 			FileUtils.cp(tmp_file_path, path)
@@ -440,7 +440,7 @@ class ImageProcessor
 		image = MiniMagick::Image.open("images/#{image_name}")
 		raise "Image not found at images/#{image_name}" if image.nil?
 
-		return image.dimensions[0] > image.dimensions[1] ? true : false
+		return image.dimensions[0] >= image.dimensions[1] ? true : false
 	end
 
 	def self.process_ios_logo image_name, final_location
@@ -667,18 +667,13 @@ class ImageProcessor
 	end
 end
 
-def prompt(*args)
-    print(*args)
-    gets
-end
-
 def generateIOS options, version_number = "1.0", build_number = "1"
 
 	settings = Generator.generate options, version_number.strip!, build_number.strip!, :iOS
 
 	if(options[:ios_path].nil? || options[:ios_path].empty?)
 		p "Current path is: #{Dir.pwd}"
-		project_path = prompt "iOS Project Path: "
+		project_path = ask "iOS Project Path: "
 		project_path.strip!
 	else
 		project_path = options[:ios_path]
@@ -753,7 +748,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			lane = "ios deploy"
 			file_suffix = "prod"
 		elsif(options[:beta] == true)
-			build_notes = prompt "Build notes?: "
+			build_notes = ask "Build notes?: "
 			lane = "ios beta notes:#{build_notes}"
 			file_suffix = "beta"
 		else
@@ -857,7 +852,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 
 	if(options[:android_path].empty?)
 		p "Current path is: #{Dir.pwd}"
-		project_path = prompt "Android Project Path: "
+		project_path = ask "Android Project Path: "
 		project_path.strip!
 	else
 		project_path = options[:android_path]
@@ -973,7 +968,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		final_name_suffix = "_prod"
 		#lane = "ios deploy"
 	elsif(options[:beta] == true)
-		build_notes = prompt "Build notes?: "
+		build_notes = ask "Build notes?: "
 		lane = "android beta notes:#{build_notes}"
 	end
 
@@ -1079,8 +1074,8 @@ android_build_number = "1"
 case options[:mode]
 when "android"
 	if(options[:production] == true || options[:beta] == true)
-		android_version_number = prompt "Android Version number: "
-		android_build_number = prompt "Android Build number: "
+		android_version_number = ask "Android Version number: "
+		android_build_number = ask "Android Build number: "
 		android_version_number.strip!
 		android_build_number.strip!
 		if(android_build_number.to_i < 100)
@@ -1091,21 +1086,21 @@ when "android"
 	generateAndroid options, android_version_number, android_build_number
 when "ios"
 	if(options[:production] == true || options[:beta] == true)
-		ios_version_number = prompt "iOS Version number: "
-		ios_build_number = prompt "iOS Build number: "
+		ios_version_number = ask "iOS Version number: "
+		ios_build_number = ask "iOS Build number: "
 	end
 
 	generateIOS options, ios_version_number, ios_build_number
 else
 	if(options[:production] == true || options[:beta] == true)
-		ios_version_number = prompt "iOS Version number: "
-		ios_build_number = prompt "iOS Build number: "
+		ios_version_number = ask "iOS Version number: "
+		ios_build_number = ask "iOS Build number: "
 	end
 
 	if(options[:production] == true || options[:beta] == true)
 		puts "Link to Google Developer Console (I always need to be reminded): https://play.google.com/apps/publish/"
-		android_version_number = prompt "Android Version number: "
-		android_build_number = prompt "Android Build number: "
+		android_version_number = ask "Android Version number: "
+		android_build_number = ask "Android Build number: "
 		android_version_number.strip!
 		android_build_number.strip!
 		if(android_build_number.to_i < 100)
