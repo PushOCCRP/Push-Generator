@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">KRIK</string>
+    <string name="app_name">Centar za istraživačko novinarstvo</string>
 
     <string name="action_settings">Podešavanja</string>
     <string name="action_refresh">Ponovo učitaj</string>
@@ -30,7 +30,7 @@
     <string name="title_item_one">Donirajte</string>
     <string name="title_item_two">O nama</string>
     <string name="main_screen_cel_date_string">Datum</string>
-    <string name="share_via">Podelite putem</string>
+    <string name="share_via">Podijelite putem</string>
 
     <!-- push notification labels -->
     <string name="notification_header">Nova priča</string>
@@ -48,7 +48,7 @@
     <string name="clock">sat</string>
     <string name="timePlaceholder">pre 40 minuta John Smith</string>
     <string name="title_about">O nama</string>
-    <string name="donate_description">Pomozite nam da rastemo i brže Vam damo ažurirane vesti. Vaša donacija namenjena je kupovini bolje opreme za besprekorno izveštavanje.</string>
+    <string name="donate_description">Pomozite nam da rastemo i brže Vam damo ažurirane vesti. Vaša donacija namijenjena je kupovini bolje opreme za besprjekorno izvještavanje.</string>
     <string name="amount_label">Iznos</string>
     <string name="donate_confirmation_prompt">Želite li da donirate?</string>
     <string name="donate_button_label">Donirajte</string>
@@ -58,7 +58,7 @@
     <string name="title_activity_search_results">Rezultati pretrage</string>
     <string name="menu_search">Pretraga</string>
     <string name="menu_about">O nama</string>
-    <string name="search_box_hint">ovde kucaj</string>
+    <string name="search_box_hint">ovdje kucaj</string>
     <string name="search_results">Rezultati pretrage</string>
     <string name="searching">Pretraga je u toku...</string>
     <string name="recent_results">Nedavni rezultati pretrage</string>
@@ -79,7 +79,7 @@
     <string name="just_now">Sada</string>
     <string name="minutes_ago">Pre % minuta</string> -->
     <string name="yesterday">Juče</string>
-    <string name="three_day_ago">Pre tri dana</string>
+    <string name="three_day_ago">Prije tri dana</string>
 
     <string name="language">Jezik</string>
 

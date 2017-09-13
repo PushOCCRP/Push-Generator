@@ -24,6 +24,24 @@ platform :ios do
   before_all do |lane, options|
 
     clear_derived_data
+    disable_automatic_code_signing(path: "Push.xcodeproj")
+    project_path="../Push.xcodeproj"
+
+    <%#project = Xcodeproj::Project.open(project_path)
+    target = project.targets.first
+    target.build_configurations.first.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = "$(sigh_testapp_appstore)"
+    target.build_configurations.last.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = "$(sigh_testapp_appstore)"
+
+    target.build_configurations.first.build_settings['CODE_SIGN_IDENTITY[sdk=iphoneos*]'] = ENV['CODE_SIGN_IDENTITY']
+    target.build_configurations.last.build_settings['CODE_SIGN_IDENTITY[sdk=iphoneos*]'] =  ENV['CODE_SIGN_IDENTITY']
+
+    target.build_configurations.first.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = ENV['APP_IDENTIFIER']
+    target.build_configurations.last.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = ENV['APP_IDENTIFIER']
+
+    target.build_configurations.first.build_settings['DEVELOPMENT_TEAM'] = ENV['FASTLANE_TEAM_ID']
+    target.build_configurations.last.build_settings['DEVELOPMENT_TEAM'] = ENV['FASTLANE_TEAM_ID']
+
+    project.save%>
 
     if(lane != :offline && lane != :add_devices && lane != :create)
       #cocoapods 
@@ -117,7 +135,7 @@ platform :ios do
     )
 
     gym(
-      #use_legacy_build_api: true,
+      export_method: "development",
       clean: true,
       scheme: 'Push',
     )
@@ -129,7 +147,7 @@ platform :ios do
     ENV["PROFILE_UUID"] = lane_context[SharedValues::SIGH_UDID]
 
     gym(
-      #use_legacy_build_api: true,
+      export_method: "development",
       clean: true,
       scheme: 'Push',
     )
@@ -151,14 +169,18 @@ platform :ios do
     ENV["PROFILE_UUID"] = lane_context[SharedValues::SIGH_UDID]
 
     update_project_provisioning(
+        xcodeproj: 'build_files/ios/project/Push.xcodeproj',
+        target_filter: '.*',
+        build_configuration: '.*'
     )
 
     gym(
-      #use_legacy_build_api: true,
+      export_method: "ad-hoc",
       clean: true,
       scheme: 'Push',
       
     ) # Build your app - more options available
+
     #hockey(
     #  api_token: "<%= settings[:credentials]['hockey-secret'] %>",
     #  notes: options[:notes],
@@ -191,7 +213,7 @@ platform :ios do
 
     gym(
         scheme: "Push",
-	      #use_legacy_build_api: true,
+        export_method: "app-store",
 	      clean: true,
         include_symbols: true,
         include_bitcode: true,
@@ -204,6 +226,8 @@ platform :ios do
   end
 
   after_all do |lane|
+    enable_automatic_code_signing(path: "Push.xcodeproj")
+
     # This block is called, only if the executed lane was successful
     
     # slack(
@@ -212,6 +236,8 @@ platform :ios do
   end
 
   error do |lane, exception|
+    enable_automatic_code_signing(path: "Push.xcodeproj")
+
     # slack(
     #   message: exception.message,
     #   success: false

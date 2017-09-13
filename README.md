@@ -19,6 +19,79 @@ There are a few things to know:
 - /finals
 -- When every a build is created it is saved into this folder. The extension on the file name will indicate whether it's a beta or production build
 
+### Steps
+
+##### iOS Specific Steps
+
+_If you're starting a new project_
+1. If you haven't signed up for an Apple Developer Account log into the [Apple Developer Console](https://developer.apple.com/account). This will take by far the longest. Their system is arduous if you're working for a company. I wish I had better advice, but just be persistant through the D-U-N-S process.
+
+1. Clone the repository
+
+	git clone https://github.com/PushOCCRP/Push-iOS
+	git clone https://github.com/PushOCCRP/Push-Generator
+
+	cd Push-iOS
+	git checkout tor      # This is the main working branch at the moment
+	cd ../Push-Generator
+
+1. Rename the customization file.
+
+	mv push-mobile-occrp.yml push-mobile.yml
+
+1. Open ```push-mobile.yml``` in your favorite text editor. This should be fairly well documented.
+
+1. Make sure to edit ```name```, ```short-name```, ```company-name``` and ```ios-bundle-parameter```. For ```ios-bundle-parameter``` you can make something up, but make sure it's a reverse url like ```com.company.mobileapp```
+
+1. Comment out line starting with ```suffix```
+
+1. Change the line ```credentials-file: "creds-occrp.yml"``` to ```credentials-file: "creds.yml"```
+
+1. Save file
+
+1. Create a copy and rename the credentials file
+
+1. Open ```creds.yml``` in your favorite text editor.
+
+1. The most important things in here for iOS are ```server-url```, ```origin-url```, ```apple-developer-email``` and ```apple-developer-team-id```, make sure to set them correctly
+
+1. Save the file and exit
+
+1. You may have to create a few folders
+
+	mkdir images/images-generated
+	mkdir images/images-generated/ios
+	mkdir ios
+	touch about-html/about_text-en.html
+
+1. Install Ruby gems that are needed
+
+	```bundle install```
+
+1. Run Cocoapods _this may take a LONG time because it has to download some pretty large source files for the CPAProxy_
+
+	cd ../Push-iOS
+	pod install
+	cd ../Push-Generator
+
+1. Run the generater in bootstrap mode ```ruby push.rb --development -m iOS -i ../Push-iOS```
+
+	> If you get an error about PNG's you may have to install ImageMagick
+	> First, install [Homebrew](https://brew.sh/) if you don't have it already.
+	> ```brew install imagemagick --build-from-source```
+
+1. You should be able to open the ```Push-iOS``` folder in XCode now and run the simulator or install on a test device.
+
+##### Android Specific Steps 
+
+1. Clone all repositories
+
+	git clone https://github.com/PushOCCRP/Push-Generator
+				# If building iOS
+	git clone https://github.com/PushOCCRP/Push-Android		# If building Android
+	cd Push-Generator
+
+
 All other folders shouldn't be touched unless you're trying to extend the system.
 
 # Operation
