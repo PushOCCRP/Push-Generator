@@ -12,6 +12,7 @@ require 'pp'
 require 'colorize'
 require 'commander/import'
 require 'open3'
+require 'java-properties'
 
 program :name, 'Push App Generator'
 program :version, '1.0.0'
@@ -653,7 +654,7 @@ class ImageProcessor
 		#image = MiniMagick::Image.open("images/#{image_name}")
 		MiniMagick::Tool::Convert.new do |convert|
 			#convert.fill(start_color)	
-			convert.merge! [image_name, '-fill', color, '+opaque', color, '-fuzz', '20%', "images/images-generated/android/#{final_name}"]
+			convert.merge! [image_name, '-channel', 'RGB', '-fill', color, '+opaque', color, '-fuzz', '20%', "images/images-generated/android/#{final_name}"]
 		  	
 		end #=> `mogrify -resize 100x100 -negate image.jpg`
 	end
@@ -881,6 +882,9 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		return
 	end
 
+	# First we have to get the previous name being set
+	old_application_id = getPreviousAndroidApplicationID project_path
+
 	FileUtils.cp("./google-service/google-services#{suffix}.json", keys_final_location + "/google-services.json");
 
 	FileUtils.cp("./android/safe_variables.gradle", keys_final_location)
@@ -926,8 +930,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 
 	#requires https://github.com/PushOCCRP/android-rename-package
 	p "Changing Android package name to #{settings['android-bundle-identifier']}"
-
-	renameAndroidImports project_path, settings['android-bundle-identifier']
+	renameAndroidImports project_path, settings['android-bundle-identifier'], old_application_id
 	#p exec("rp r #{project_path} --package-name #{settings['android-bundle-identifier']}")
 	renameAndroidPackageFolders 'main', settings['android-bundle-identifier'], project_path
 	renameAndroidPackageFolders 'test', settings['android-bundle-identifier'], project_path
@@ -981,7 +984,7 @@ def binaryName settings, suffix
 	return "#{settings['short-name']}_#{Time.now.strftime("%Y%m%d_%H%M%S")}_#{suffix}"
 end
 
-def renameAndroidImports project_path, identifier
+def renameAndroidImports project_path, identifier, old_application_id
 	Find.find(project_path) do |path|
 	  if FileTest.directory?(path)
 	    if File.basename(path)[0] == ?.
@@ -991,6 +994,9 @@ def renameAndroidImports project_path, identifier
 	    end
 	  elsif File.extname(path) == ".java" || File.extname(path) == '.xml'
 		text = File.read(path)
+		# Two passes, one to switch package names
+		# Second pass takes care of defaults in the package templates
+		text.gsub!(/#{old_application_id}[A-z]*/, identifier)
 		text.gsub!(/com.push.[A-z]*/, identifier)
 		File.write(path, text)
 	  else
@@ -1050,6 +1056,12 @@ def renameAndroidPackageFolders mode, identifier, project_path
 		end
 	end
 
+end
+
+def getPreviousAndroidApplicationID project_path
+	project_path += "/" unless project_path[-1] == '/'
+	properties = JavaProperties.load(project_path + "app/build.gradle")
+	return properties[:applicationId].tr('"', '')
 end
 
 # This takes in a message, that can be a string or an array of string, each will be printed on a different line
