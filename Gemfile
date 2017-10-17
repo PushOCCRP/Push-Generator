@@ -5,4 +5,5 @@ source 'https://rubygems.org' do
   gem "fastlane"
   gem "byebug"
   gem "commander"
+  gem "java-properties"
 end
