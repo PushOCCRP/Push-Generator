@@ -1,0 +1,232 @@
+###############################################################
+#
+# translatable-string-en.yml
+#
+# Created by Christopher Guess on 10/17/2017.
+# cguess@gmail.com
+# PGP: 6A6C 0C5C 331A 2F89 7BAF
+#
+# Tranlastion by Christopher Guess on 10/17/2017.
+# cguess@gmail.com
+# PGP: 6A6C 0C5C 331A 2F89 7BAF
+#
+# This file is a base file for translated strings.
+# After editing, this can be run through push-translate.rb
+# to produce iOS and Android compatible string files.
+#
+#
+# Note to translators:
+# Please edit the information above as appropriate when
+# completeing the translations.
+#
+# The format of this page is YAML
+# An introduction can be found at https://en.wikipedia.org/wiki/YAML
+# 
+# The final file should be named "translatable-string-***language_code***.yml"
+# i.e. translatable-string-de.yml, translatable-string-en-gb.yml
+#
+###############################################################
+
+---
+
+# The ISO 639-1 code (see here: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) or language varaint (i.e. en-GB, en-US)
+
+# NOTE: Tranlsators, ignore the rest of this comment, it is for developers only
+#######
+# This get a bit complicated, as we can support languages in the app that the OS's don't support
+# As long as the alphabet is supported it'll work
+# However, we won't be able to automatically select the language, and will instead default to what their phone has
+# The default fall back is English.
+#
+# Apple and Android don't perfectly overlap on this and the list of supported languages changes from version to version
+# A gneral list cand be found here:
+# ios: https://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
+# android: http://www.apps4android.org/?p=3695
+
+language-short-code: en
+
+# The full name of the language, in the proper writing system
+language-name: English
+
+
+######
+# On a dialog popup, such as a confirmation screen, these buttons appear as options
+######
+
+ok: OK
+back: Back
+
+
+
+######
+# These are the titles of the various screens. They are both displayed and read for accessibility users
+######
+
+# The initial screen of the app showing all articles
+home: Home
+# A page where reader can donate money to the organization
+dontate: Donate
+# A page describing the organization and/or app
+about: About
+# A page to search the archive of the organization
+search: Search
+
+
+
+######
+# These are dialogs that may appear on the page
+######
+
+# The title of the dialog for choosing a language if multiple languages are available
+choose-language: Choose Language
+
+# For sharing stories via social media, emails or messenger
+share: Share
+
+
+
+#####
+# The app can display a push notification. This can happen if the app is closed or open.
+#####
+
+# This is the title of a push notification either on the lock screen of the device
+# or the title of a modal alert if the reader is using the app when it is sent
+news-alert: News Alert
+
+# These are the options if the notification is shown within the app itself
+read: Read
+# This may be reused in other part of the apps as well
+cancel: Cancel
+
+
+
+#####
+# On the search dialog these are the various status messages
+#####
+
+# Shown when no results are returned from the search
+no-results-found: No Results Found
+# Shown while in the process of searching
+searching: Searching...
+
+
+
+#####
+# Video player specific features. These may be read via accessibility as well
+#####
+
+youtube: YouTube
+vimeo: Vimeo
+error-starting-video-player: Error starting video player.
+play: Play
+pause: Pause
+stop: Stop
+seek: Seek
+
+
+
+#####
+# These are statuses shown when reloading content either on the home page or other places
+#####
+
+pull-to-refresh: Pull to refresh...
+release-to-refresh: Release to refresh...
+loading: Loading...
+
+
+
+#####
+# Article specific tags
+#####
+
+# For use indicating authorship or a byline
+# There are alternatives here for design purposes, some langauges may set them to the same value
+# This can be turned off for an indiviual app, but should be included in all translations
+by: By
+author: Author
+byline: Byline
+writer: Writer
+
+# For indicating a photo byline
+# There are two alternatives here for design purposes, some langauges may set them to the same value
+# This can be turned off for an indiviual app, but should be included in all translations
+photo: Photo
+photographer: Photographer
+photo-by: Photo By
+videographer: Videographer
+video: Video
+video-by: Video By
+design: Design
+designer: Designer
+design-by: Design By
+
+# For indicating the publication date
+# There are two alternatives here for design purposes, some langauges may set them to the same value
+# This can be turned off for an indiviual app, but should be included in all translations
+published: Published
+published on: Published On
+
+
+#####
+# Date and time
+#####
+
+yesterday: Yesterday
+tomorrow: Tomorrow
+
+hour: Hour
+hours: Hours
+minute: Minute
+minutes: Minutes
+second: Second
+seconds: Seconds
+day: Day
+days: Days
+
+# Months (Georgian calendar)
+january: January
+februrary: February
+march: March
+april: April
+may: May
+june: June
+july: July
+august: August
+september: September
+october: October
+november: November
+december: December
+
+# Days (Georgian calendar)
+sunday: Sunday
+monday: Monday
+tuesday: Tuesday
+wednesday: Wednesday
+thursday: Thursday
+friday: Friday
+saturday: Saturday
+
+# Date format, using mm/dd/yyyy, dd/mm/yyyy, mm-dd-yyyy, or dd-mm-yyyy format
+# This can be ignored in app settings, but must be set in translations
+# To support more formats please contact the developer
+format: mm/dd/yyyy
+
+#####
+# Connection/Networking
+# These are used for showing dialogs when fixing network settings
+#####
+
+you-are-currently-offline: You are currently offline.
+offline: Offline
+connect: Connect
+connecting: Connecting...
+connection-error: Connection Error
+error: Error
+
+fixing-network-issue: Fixing Network Issue
+one-moment-while-we-attempt-to-fix-our-connection: One moment while we attempt to fix our connection...
+can-not-connect-to-server: Can not connect to server.
+
+
+
+
