@@ -994,13 +994,15 @@ def renameAndroidImports project_path, identifier, old_application_id
 	    end
 	  elsif File.extname(path) == ".java" || File.extname(path) == '.xml'
 		text = File.read(path)
-		# Two passes, one to switch package names
-		# Second pass takes care of defaults in the package templates
-		text.gsub!(/#{old_application_id}[A-z]*/, identifier)
-		text.gsub!(/com.push.[A-z]*/, identifier)
-		File.write(path, text)
+			puts("Changing name in file: #{path}")
+			# Two passes, one to switch package names
+			# Second pass takes care of defaults in the package templates
+			byebug unless text[/#{old_application_id}[A-z]*/].nil?
+			text.gsub!(/#{old_application_id}[A-z]*/, identifier)
+			text.gsub!(/com\.push\.[A-z]*/, identifier)
+			File.write(path, text)
 	  else
- 		#cleaning...
+ 			#cleaning...
 	  	if(File.basename(path) == '.byebug_history')
 	  		FileUtils.rm path
 	  	end
