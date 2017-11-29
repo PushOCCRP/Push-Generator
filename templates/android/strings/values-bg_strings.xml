@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name"><%= settings["name"] %></string>
+    <string name="app_name">Bivol.bg</string>
 
     <string name="action_settings">Настройки</string>
     <string name="action_refresh">Обнови</string>

@@ -1062,8 +1062,14 @@ end
 
 def getPreviousAndroidApplicationID project_path
 	project_path += "/" unless project_path[-1] == '/'
-	properties = JavaProperties.load(project_path + "app/build.gradle")
-	return properties[:applicationId].tr('"', '')
+	begin
+		properties = JavaProperties.load(project_path + "app/build.gradle")		
+		app_name = properties[:applicationId].tr('"', '')
+	rescue Exception => e
+		app_name = "com.push.meydan"
+	end
+
+	return app_name
 end
 
 # This takes in a message, that can be a string or an array of string, each will be printed on a different line
