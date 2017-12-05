@@ -958,7 +958,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		command = "supply init --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
 		p command
 		p system(command)
-		command = "supply --apk #{project_path}/app/build/outputs/apk/app-release.apk --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
+		command = "supply --apk #{project_path}/app/build/outputs/apk/release/app-release.apk --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
 		p command
 		success = p system(command)
 		if(success == false)
@@ -975,7 +975,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		lane = "android beta notes:#{build_notes}"
 	end
 
-	Generator.copy_file("#{project_path}/app/build/outputs/apk/app-release.apk", "#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk")
+	Generator.copy_file("#{project_path}/app/build/outputs/apk/release/app-release.apk", "#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk")
 	p exec("cd #{project_path}")
 	p exec("cd #{project_path} && fastlane #{lane} apk:#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk") if(lane != nil)
 end
