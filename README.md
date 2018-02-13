@@ -63,10 +63,12 @@ cd ../Push-Generator
 
 1. You may have to create a few folders
 
+```
 	mkdir images/images-generated
 	mkdir images/images-generated/ios
 	mkdir ios
 	touch about-html/about_text-en.html
+```
 
 1. Install Ruby gems that are needed
 
@@ -74,10 +76,11 @@ cd ../Push-Generator
 
 1. Run Cocoapods _this may take a LONG time because it has to download some pretty large source files for the CPAProxy_
 
+```
 	cd ../Push-iOS
 	pod install
 	cd ../Push-Generator
-
+```
 1. Run the generater in bootstrap mode ```ruby push.rb --development -m iOS -i ../Push-iOS```
 
 	> If you get an error about PNG's you may have to install ImageMagick
