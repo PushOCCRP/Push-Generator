@@ -10,6 +10,11 @@ push-mobile.yml
 /images/*.png
 /iamges/*.jpg
 /images/*.gif
+
+images/*.png
+iamges/*.jpg
+images/*.gif
+
 /about-html/*
 /google-service/*
 !images/android
