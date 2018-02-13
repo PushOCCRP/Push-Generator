@@ -28,18 +28,19 @@ _If you're starting a new project_
 
 1. Clone the repository
 
-	git clone https://github.com/PushOCCRP/Push-iOS
+```	git clone https://github.com/PushOCCRP/Push-iOS
 	git clong https://github.com/PushOCCRP/Push-Android
 	git clone https://github.com/PushOCCRP/Push-Generator
+```
 
-
-	cd Push-iOS
+```	cd Push-iOS
 	git checkout tor      # This is the main working branch at the moment
 	cd ../Push-Generator
-
+```
 1. Rename the customization file.
 
-	mv push-mobile-occrp.yml push-mobile.yml
+```	mv push-mobile-occrp.yml push-mobile.yml
+```
 
 1. Open ```push-mobile.yml``` in your favorite text editor. This should be fairly well documented.
 
