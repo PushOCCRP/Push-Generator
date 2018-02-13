@@ -39,8 +39,7 @@ _If you're starting a new project_
 ```
 1. Rename the customization file.
 
-```	mv push-mobile-occrp.yml push-mobile.yml
-```
+```mv push-mobile-occrp.yml push-mobile.yml```
 
 1. Open ```push-mobile.yml``` in your favorite text editor. This should be fairly well documented.
 
