@@ -39,6 +39,7 @@ cd Push-iOS
 git checkout tor      # This is the main working branch at the moment
 cd ../Push-Generator
 ```
+##### Steps For All Targets
 1. Rename the customization file.
 
 ```mv push-mobile-occrp.yml push-mobile.yml```
