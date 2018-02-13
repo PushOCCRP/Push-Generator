@@ -21,6 +21,14 @@ There are a few things to know:
 
 ### Steps
 
+##### Install Ruby
+_If you don't have Ruby installed already you must do so. This is somewhat a bit of a chore, but required for the development machine._
+
+1. Install Homebrew
+	1. In a terminal type ```/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"```
+	1. 
+
+
 ##### iOS Specific Steps
 
 _If you're starting a new project_
