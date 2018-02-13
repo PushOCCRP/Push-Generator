@@ -21,12 +21,20 @@ There are a few things to know:
 
 ### Steps
 
-##### Install Ruby
+##### Installing Pre-requisite Stuff
 _If you don't have Ruby installed already you must do so. This is somewhat a bit of a chore, but required for the development machine._
 
-1. Install Homebrew
+1. Install Homebrew (skip if you have it installed already)
 	1. In a terminal type ```/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"```
-	1. 
+	1. Say yes, and type in your password
+1. Install Git
+	1. ```brew install git```
+1. Install GPG (RVM uses this to verify ruby packages are legit)
+	1. ```brew install gpg```
+1. Install RVM. This is used to easily manage different types of the programming language Ruby, otherwise it can be a bit of a mess.
+	1. ```gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB```
+	1. ```\curl -sSL https://get.rvm.io | bash -s stable```
+	1. Now close your terminal window and reopen a new one. This reloads the shell so the ```rvm``` command now appears.
 
 
 ##### iOS Specific Steps
