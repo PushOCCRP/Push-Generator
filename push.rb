@@ -413,7 +413,9 @@ class Generator
 		#Set the name of the app in all relevant language files
 		folders = ["values"]
 		settings['languages'].each do |language|
-			if(language != "en")
+			if(language == "sr")
+				folders << "values-b+sr+Latn"
+			elsif(language != "en")
 				folders << "values-" + language
 			end
 		end

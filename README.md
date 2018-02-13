@@ -29,7 +29,9 @@ _If you're starting a new project_
 1. Clone the repository
 
 	git clone https://github.com/PushOCCRP/Push-iOS
+	git clong https://github.com/PushOCCRP/Push-Android
 	git clone https://github.com/PushOCCRP/Push-Generator
+
 
 	cd Push-iOS
 	git checkout tor      # This is the main working branch at the moment

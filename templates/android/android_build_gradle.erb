@@ -22,8 +22,8 @@ android {
         applicationId "<%= settings["android-bundle-identifier"] %>"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 10
-        versionName "1.0"
+        versionCode <%= settings[:build_number] %>
+        versionName "<%= settings[:version_number] %>"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
