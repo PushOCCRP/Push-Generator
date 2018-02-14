@@ -6,4 +6,6 @@ source 'https://rubygems.org' do
   gem "byebug"
   gem "commander"
   gem "java-properties"
+
+  gem 'process_helper'
 end
