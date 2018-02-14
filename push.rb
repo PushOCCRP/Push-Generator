@@ -771,19 +771,27 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			error = nil
 			exit_status = nil
 			PTY.spawn(cmd) do |reader, writer, pid|
-				reader.expect "Please enter the 6 digit code:"
-				code = ask ("Two factor code: ")
-				writer.puts code
+				begin
+		      # Do stuff with the output here. Just printing to show it works
+		      stdout.each { |line| print line }
+					reader.expect "Please enter the 6 digit code:"
+					code = ask ("Two factor code: ")
+					writer.puts code
 
-				reader.expect("Could not find App with App Identifier") do
-					status = false
-					error = :no_app
-				end
+					reader.expect("Could not find App with App Identifier") do
+						status = false
+						error = :no_app
+					end
 
-				reader.expect("Missing password for user") do
-					status = false
-					error = :missing_password
-				end
+					reader.expect("Missing password for user") do
+						status = false
+						error = :missing_password
+					end
+				rescue Errno::EIO
+		      puts "Errno:EIO error, but this probably just means " +
+		            "that the process has finished giving output"
+		    end
+
 			end
 #			response = process(cmd, {log: true, pty: true})
 			# Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
