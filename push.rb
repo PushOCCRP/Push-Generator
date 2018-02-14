@@ -14,8 +14,7 @@ require 'commander/import'
 require 'open3'
 require 'java-properties'
 require 'tty-command'
-require 'pty'
-require 'expect'
+require 'credentials_manager'
 
 program :name, 'Push App Generator'
 program :version, '1.1.0'
@@ -772,6 +771,12 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			error = nil
 			exit_status = nil
 			#TTY::Command.new(pty: true).run(cmd)
+			data = CredentialsManager::AccountManager.new(user: user, password: password)
+			
+			puts "--------------"
+			puts data.user
+			puts data.password
+			puts "--------------"
 
 			PTY.spawn(cmd) do |reader, writer, pid|
 				begin
