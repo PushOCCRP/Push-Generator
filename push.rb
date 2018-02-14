@@ -773,7 +773,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			PTY.spawn(cmd) do |reader, writer, pid|
 				begin
 		      # Do stuff with the output here. Just printing to show it works
-		      stdout.each { |line| print line }
+		      reader.each { |line| print line }
 					reader.expect "Please enter the 6 digit code:"
 					code = ask ("Two factor code: ")
 					writer.puts code
