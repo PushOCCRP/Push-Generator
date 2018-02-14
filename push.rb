@@ -778,6 +778,10 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 					code = ask ("Two factor code: ")
 					writer.puts code
 
+					reader.expect "Password (for"
+					password = ask ("Password: ")
+					writer.puts password
+
 					reader.expect("Multiple Teams found on the Developer Portal, please enter")
 					code = ask "Number of organization."
 					writer.puts code
