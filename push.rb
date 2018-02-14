@@ -772,7 +772,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			exit_status = nil
 			#TTY::Command.new(pty: true).run(cmd)
 			
-			user = CredentialsManager::AccountManager.new().user
+			password = CredentialsManager::AccountManager.new().password
 			
 			puts "--------------"
 			puts user.inspect
