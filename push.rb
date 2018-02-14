@@ -1,5 +1,5 @@
-# Push Generator - v1.0
-# ©Christopher Guess/ICFJ 2016 
+# Push Generator - v1.0.1
+# ©Christopher Guess 2018
 require 'optparse'
 require 'byebug'
 require 'yaml'
@@ -13,9 +13,11 @@ require 'colorize'
 require 'commander/import'
 require 'open3'
 require 'java-properties'
+require 'process_helper'
+include ProcessHelper
 
 program :name, 'Push App Generator'
-program :version, '1.0.0'
+program :version, '1.1.0'
 program :description, 'A script to automatically generate iOS and Android apps for the Push ecosystem'
 
 Options = Struct.new(:file_name, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new)
@@ -832,14 +834,16 @@ def add_apple_developer_user email
 	password = ask("Password:  ") { |q| q.echo = "*" }
 	cmd = "fastlane fastlane-credentials add --username #{email} --password #{password}"
 	status = false
-	Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-		while line = stdout.gets
-			puts line
-			status = true if line.include?("added to keychain.")
-		end
-		exit_status = wait_thr.value
-		exit unless exit_status.success?
-	end
+  response = process(cmd, {log: true, pty: true})
+  byebug
+	# Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+	# 	while line = stdout.gets
+	# 		puts line
+	# 		status = true if line.include?("added to keychain.")
+	# 	end
+	# 	exit_status = wait_thr.value
+	# 	exit unless exit_status.success?
+	# end
 
 	p "Added #{email} to your keychain."
 end
