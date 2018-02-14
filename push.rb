@@ -771,11 +771,11 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			error = nil
 			exit_status = nil
 			#TTY::Command.new(pty: true).run(cmd)
-			data = CredentialsManager::AccountManager.new(user: user, password: password)
+			
+			password = CredentialsManager::AccountManager.password
 			
 			puts "--------------"
-			puts data.user
-			puts data.password
+			puts password
 			puts "--------------"
 
 			PTY.spawn(cmd) do |reader, writer, pid|
