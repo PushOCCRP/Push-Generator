@@ -770,39 +770,41 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			status = true
 			error = nil
 			exit_status = nil
-			PTY.spawn(cmd) do |reader, writer, pid|
-				begin
-		      # Do stuff with the output here. Just printing to show it works
-		      reader.each { |line| print line }
+			TTY::Command.new(pty: true).run(cmd)
 
-					reader.expect "Please enter the 6 digit code:" do
-						code = ask ("Two factor code: ")
-						writer.puts code
-					end
+			# PTY.spawn(cmd) do |reader, writer, pid|
+			# 	begin
+		 #      # Do stuff with the output here. Just printing to show it works
+		 #      reader.each { |line| print line }
 
-					reader.expect /(Please provide your Apple Developer Program).+/ do
-						password = ask "Password: "
-						writer.puts password
-					end
+			# 		reader.expect "Please enter the 6 digit code:" do
+			# 			code = ask ("Two factor code: ")
+			# 			writer.puts code
+			# 		end
 
-					reader.expect /(Multiple Teams found on the Developer Portal, please enter).+/ do
-						code = ask "Number of organization."
-						writer.puts code
-					end
+			# 		reader.expect /(Please provide your Apple Developer Program).+/ do
+			# 			password = ask "Password: "
+			# 			writer.puts password
+			# 		end
 
-					reader.expect /(Could not find App with App Identifier).+/ do
-						status = false
-						error = :no_app
-					end
+			# 		reader.expect /(Multiple Teams found on the Developer Portal, please enter).+/ do
+			# 			code = ask "Number of organization."
+			# 			writer.puts code
+			# 		end
 
-					reader.expect /(Missing password for user).+/ do
-						status = false
-						error = :missing_password
-					end
-				rescue Errno::EIO
-		      puts "Errno:EIO error, but this probably just means " +
-		            "that the process has finished giving output"
-		    end
+			# 		reader.expect /(Could not find App with App Identifier).+/ do
+			# 			status = false
+			# 			error = :no_app
+			# 		end
+
+			# 		reader.expect /(Missing password for user).+/ do
+			# 			status = false
+			# 			error = :missing_password
+			# 		end
+			# 	rescue Errno::EIO
+		 #      puts "Errno:EIO error, but this probably just means " +
+		 #            "that the process has finished giving output"
+		 #    end
 
 			end
 #			response = process(cmd, {log: true, pty: true})

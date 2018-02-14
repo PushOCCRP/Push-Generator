@@ -7,5 +7,5 @@ source 'https://rubygems.org' do
   gem "commander"
   gem "java-properties"
 
-  gem 'process_helper'
+	gem 'tty-command'
 end

@@ -113,6 +113,16 @@ cd ../Push-Generator
 
 	> If this is your first time you will have to log into your Apple Developer Account, so watch out.
 
+	> If you're using 2-Factor Authentication on your Apple account (you should) it gets more difficult. Follow the following steps:
+	1. Visit appleid.apple.com/account/manage
+	1. Login, persumably using your two factor auth.
+	1. Scroll down to the "Security" section, and click the "Generate Password..." link in the right column
+	1. Type in a name: "Push Generator" is a good one.
+	1. Since your normal username is now save, we have to remove it first. Go to your terminal and type ```fastlane fastlane-credentials remove```. Then type in your Apple Id email.
+	1. Run ```ruby push.rb --development -m iOS -i ../Push-iOS``` again
+	1. When it asks for your user password copy and paste the password that was just generated into the terminal.
+	1. Run ```ruby push.rb --development -m iOS -i ../Push-iOS``` again (yes, again)
+
 1. You should be able to open the ```Push-iOS``` folder in XCode now and run the simulator or install on a test device.
 
 ##### Android Specific Steps 
