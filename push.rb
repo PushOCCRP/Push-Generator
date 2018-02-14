@@ -781,7 +781,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 					end
 
 					reader.expect "Password (for" do
-						password = ask ("Password: ")
+						password = ask "Password: "
 						writer.puts password
 					end
 
