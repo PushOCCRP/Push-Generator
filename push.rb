@@ -774,17 +774,21 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 				begin
 		      # Do stuff with the output here. Just printing to show it works
 		      reader.each { |line| print line }
-					reader.expect "Please enter the 6 digit code:"
-					code = ask ("Two factor code: ")
-					writer.puts code
 
-					reader.expect /(Password \(for).+/
-					password = ask ("Password: ")
-					writer.puts password
+					reader.expect "Please enter the 6 digit code:" do
+						code = ask ("Two factor code: ")
+						writer.puts code
+					end
 
-					reader.expect /(Multiple Teams found on the Developer Portal, please enter).+/
-					code = ask "Number of organization."
-					writer.puts code
+					reader.expect /(Password \(for).+/ do
+						password = ask ("Password: ")
+						writer.puts password
+					end
+
+					reader.expect /(Multiple Teams found on the Developer Portal, please enter).+/ do
+						code = ask "Number of organization."
+						writer.puts code
+					end
 
 					reader.expect /(Could not find App with App Identifier).+/ do
 						status = false
