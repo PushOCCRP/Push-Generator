@@ -806,7 +806,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 		 #            "that the process has finished giving output"
 		 #    end
 
-			end
+#			end
 #			response = process(cmd, {log: true, pty: true})
 			# Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 			# 	while line = stdout.gets
