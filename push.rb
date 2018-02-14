@@ -830,7 +830,7 @@ end
 def add_apple_developer_user email
 	say "Please login to your Apple Developer Account: #{email}".green
 	password = ask("Password:  ") { |q| q.echo = "*" }
-	cmd = "fastlane-credentials add --username #{email} --password #{password}"
+	cmd = "fastlane fastlane-credentials add --username #{email} --password #{password}"
 	status = false
 	Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 		while line = stdout.gets
