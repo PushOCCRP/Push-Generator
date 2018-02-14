@@ -774,6 +774,16 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 				reader.expect "Please enter the 6 digit code:"
 				code = ask ("Two factor code: ")
 				writer.puts code
+
+				reader.expect("Could not find App with App Identifier") do
+					status = false
+					error = :no_app
+				end
+
+				reader.expect("Missing password for user") do
+					status = false
+					error = :missing_password
+				end
 			end
 #			response = process(cmd, {log: true, pty: true})
 			# Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
@@ -790,15 +800,15 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			#   exit_status = wait_thr.value
 			# end
 
-			if line.include?("Could not find App with App Identifier")
-				status = false
-				error = :no_app
-			elsif line.include?("Missing password for user") 
-				status = false
-				error = :missing_password
-			else
+			# if line.include?("Could not find App with App Identifier")
+			# 	status = false
+			# 	error = :no_app
+			# elsif line.include?("Missing password for user") 
+			# 	status = false
+			# 	error = :missing_password
+			# else
 				exit_status = :success
-			end
+			# end
 
 			if(!status)
 				case error
