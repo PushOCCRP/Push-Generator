@@ -778,20 +778,20 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 					code = ask ("Two factor code: ")
 					writer.puts code
 
-					reader.expect "Password (for"
+					reader.expect /(Password \(for).+/
 					password = ask ("Password: ")
 					writer.puts password
 
-					reader.expect("Multiple Teams found on the Developer Portal, please enter")
+					reader.expect /(Multiple Teams found on the Developer Portal, please enter).+/
 					code = ask "Number of organization."
 					writer.puts code
 
-					reader.expect("Could not find App with App Identifier") do
+					reader.expect /(Could not find App with App Identifier).+/ do
 						status = false
 						error = :no_app
 					end
 
-					reader.expect("Missing password for user") do
+					reader.expect /(Missing password for user).+/ do
 						status = false
 						error = :missing_password
 					end
