@@ -13,8 +13,8 @@ require 'colorize'
 require 'commander/import'
 require 'open3'
 require 'java-properties'
-require 'process_helper'
-include ProcessHelper
+require 'pty'
+require 'expect'
 
 program :name, 'Push App Generator'
 program :version, '1.1.0'
@@ -770,7 +770,12 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			status = true
 			error = nil
 			exit_status = nil
-			response = process(cmd, {log: true, pty: true})
+			PTY.spawn(cmd) do |reader, writer, pid|
+				reader.expect "Please enter the 6 digit code:"
+				code = ask ("Two factor code: ")
+				writer.puts code
+			end
+#			response = process(cmd, {log: true, pty: true})
 			# Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 			# 	while line = stdout.gets
 			# 		puts line
