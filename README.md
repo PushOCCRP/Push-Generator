@@ -8,7 +8,7 @@ There are a few things to know:
 *Note:* All of these also support an extension, which can be set in the push-mobile.yml file. This allows you to maintain multiple sites in one single instance of the software. Just add '-name_of_company' to the base name of any file. Ex: push-mobile-occrp.yml, creds-occrp.yml etc.
 - push-mobile.yml
 -- This is the basic config file. In this file you can set colors, names, logos etc.
-- creds.yml
+- push-mobile-credentials.yml
 -- This should be customized to include your configuration keys for various services. *Do not check this file into the repository*
 - /about-html
 -- This folder will contain the about page html files for each language in the format about-html-en.html or about-html-ru.html etc.
@@ -35,7 +35,13 @@ _If you don't have Ruby installed already you must do so. This is somewhat a bit
 	1. ```curl -sSL https://rvm.io/mpapis.asc | gpg --import -```
 	1. ```\curl -sSL https://get.rvm.io | bash -s stable```
 	1. Now close your terminal window and reopen a new one. This reloads the shell so the ```rvm``` command now appears.
-
+1. Install Ruby
+	1. ```rvm install $(<.ruby-version)```
+	1. Wait awhile. Depending on your machine this can take quite a bit of time.	
+	1. Install the main bundler gem ```gem install bundler```
+	1. ```ruby -v``` should show a proper version of Ruby.
+1. Install ImageMagick
+	1. ```brew install imagemagick```
 
 ##### iOS Specific Steps
 
@@ -66,7 +72,7 @@ cd ../Push-Generator
 
 1. Comment out line starting with ```suffix```
 
-1. Change the line ```credentials-file: "creds-occrp.yml"``` to ```credentials-file: "creds.yml"```
+1. Change the line ```credentials-file: "creds-occrp.yml"``` to ```credentials-file: "push-mobile-credentials.yml"```
 
 1. Save file
 
@@ -96,6 +102,7 @@ cd ../Push-Generator
 ```
 	cd ../Push-iOS
 	pod install
+	bundle update
 	cd ../Push-Generator
 ```
 1. Run the generater in bootstrap mode ```ruby push.rb --development -m iOS -i ../Push-iOS```
@@ -103,6 +110,8 @@ cd ../Push-Generator
 	> If you get an error about PNG's you may have to install ImageMagick
 	> First, install [Homebrew](https://brew.sh/) if you don't have it already.
 	> ```brew install imagemagick --build-from-source```
+
+	> If this is your first time you will have to log into your Apple Developer Account, so watch out.
 
 1. You should be able to open the ```Push-iOS``` folder in XCode now and run the simulator or install on a test device.
 
