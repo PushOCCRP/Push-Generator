@@ -770,18 +770,29 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 			status = true
 			error = nil
 			exit_status = nil
-			Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-				while line = stdout.gets
-					puts line
-					if line.include?("Could not find App with App Identifier")
-						status = false
-						error = :no_app 
-					elsif line.include?("Missing password for user")
-						status = false
-						error = :missing_password
-					end
-				end
-			  exit_status = wait_thr.value
+			response = process(cmd, {log: true, pty: true})
+			# Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+			# 	while line = stdout.gets
+			# 		puts line
+			# 		if line.include?("Could not find App with App Identifier")
+			# 			status = false
+			# 			error = :no_app 
+			# 		elsif line.include?("Missing password for user")
+			# 			status = false
+			# 			error = :missing_password
+			# 		end
+			# 	end
+			#   exit_status = wait_thr.value
+			# end
+
+			if line.include?("Could not find App with App Identifier")
+				status = false
+				error = :no_app
+			elsif line.include?("Missing password for user") 
+				status = false
+				error = :missing_password
+			else
+				exit_status = :success
 			end
 
 			if(!status)
@@ -801,7 +812,7 @@ def generateIOS options, version_number = "1.0", build_number = "1"
 
 				add_appple_developer_app settings
 			else
-				exit unless exit_status.success?
+				exit unless exit_status == :success
 	  		break;
 			end
 		end
@@ -834,16 +845,14 @@ def add_apple_developer_user email
 	password = ask("Password:  ") { |q| q.echo = "*" }
 	cmd = "fastlane fastlane-credentials add --username #{email} --password #{password}"
 	status = false
-  response = process(cmd, {log: true, pty: true})
-  byebug
-	# Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-	# 	while line = stdout.gets
-	# 		puts line
-	# 		status = true if line.include?("added to keychain.")
-	# 	end
-	# 	exit_status = wait_thr.value
-	# 	exit unless exit_status.success?
-	# end
+	Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+		while line = stdout.gets
+			puts line
+			status = true if line.include?("added to keychain.")
+		end
+		exit_status = wait_thr.value
+		exit unless exit_status.success?
+	end
 
 	p "Added #{email} to your keychain."
 end
