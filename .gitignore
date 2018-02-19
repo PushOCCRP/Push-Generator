@@ -20,7 +20,7 @@ images/images-generated/*
 !creds-template.yml
 .byebug_history
 /.gradle/
-/.idea/
+/.idea/*
 .DS_Store
 .DS_Store?
 .idea/*
