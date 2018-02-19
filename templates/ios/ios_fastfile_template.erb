@@ -24,7 +24,7 @@ platform :ios do
   before_all do |lane, options|
 
     clear_derived_data
-    disable_automatic_code_signing(path: "Push.xcodeproj")
+    # disable_automatic_code_signing(path: "Push.xcodeproj")
     project_path="../Push.xcodeproj"
 
     <%#project = Xcodeproj::Project.open(project_path)
