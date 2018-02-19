@@ -123,7 +123,27 @@ cd ../Push-Generator
 	1. When it asks for your user password copy and paste the password that was just generated into the terminal.
 	1. Run ```ruby push.rb --development -m iOS -i ../Push-iOS``` again (yes, again)
 
-1. You should be able to open the ```Push-iOS``` folder in XCode now and run the simulator or install on a test device.
+	> You may get an error about your account not having a device. If this happens just continue to the next step.
+
+
+1. Open XCode
+	1. File menu -> Open -> Navigate to the Push-iOS folder -> Click Open
+	1. Plug in your test device (iPhone or iPad)
+
+	> If this is a brand new Apple Developer Account you need to add at least one device to the store. Xcode can do this for you.
+	1. Unlock your device (passcode, FaceID, TouchID etc.)
+	1. Click "trust" on your device.
+	1. XCode menu -> Preferences -> Accounts tab -> Plus button in lower left corner
+	1. Choose "Apple ID" and click "Continue"
+	1. Login to your Apple ID account.
+	1. Go to the "Push" Project item on the left side navigator.
+	1. Make sure "Automatically manage signing" is chcecked.
+	1. In the "Signing" section, click "Register Device"
+	
+1. Choose your test device in the device drop down near the top of XCode
+
+1. Product menu -> Run 
+	> You may have to click "Enable" and type in your password if a "Enable Developer Mode on this Mac?" dialoug appears.
 
 ##### Android Specific Steps 
 
