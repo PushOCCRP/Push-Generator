@@ -102,7 +102,8 @@ platform :ios do
       development: true,
       force: true,
       username: "<%= settings[:credentials]['apple-developer-email']%>",
-      app_identifier: "<%= settings['ios-bundle-identifier'] %>"
+      app_identifier: "<%= settings['ios-bundle-identifier'] %>",
+      team_id: '<%= settings[:credentials]['apple-developer-team-id'] %>',
     )
 
 
@@ -127,7 +128,9 @@ platform :ios do
       adhoc: true,
       force: true,
       username: "<%= settings[:credentials]['apple-developer-email']%>",
-      app_identifier: "<%= settings['ios-bundle-identifier'] %>"
+      app_identifier: "<%= settings['ios-bundle-identifier'] %>",
+      team_id: '<%= settings[:credentials]['apple-developer-team-id'] %>',
+
     )
     
     # use the UID of the newly created provisioning profile
@@ -165,7 +168,8 @@ platform :ios do
     sigh(
       force: true,
       username: "<%= settings[:credentials]['apple-developer-email']%>",
-      app_identifier: "<%= settings['ios-bundle-identifier'] %>"
+      app_identifier: "<%= settings['ios-bundle-identifier'] %>",
+      team_id: '<%= settings[:credentials]['apple-developer-team-id'] %>',
     )
     
     # use the UID of the newly created provisioning profile
@@ -210,6 +214,7 @@ platform :ios do
 	    force: true,
     	username: "<%= settings[:credentials]['apple-developer-email']%>",
     	app_identifier: "<%= settings['ios-bundle-identifier'] %>",
+      team_id: '<%= settings[:credentials]['apple-developer-team-id'] %>',
     )
 
     update_project_provisioning(
