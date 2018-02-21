@@ -404,10 +404,7 @@ class Generator
 
 	def self.saveFile file_name, content
 		dirname = File.dirname(file_name)
-		unless File.directory?(dirname)
-		  FileUtils.mkdir_p(dirname)
-		end
-
+		FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
 
 		if(File.exist?(file_name))
 			File.delete(file_name)
@@ -648,8 +645,9 @@ class ImageProcessor
 
 
 	def self.process image_sizes, image_name, final_location
-		image = MiniMagick::Image.open("images/#{image_name}")
+		FileUtils.mkdir_p(dirname) unless File.directory?("images")
 
+		image = MiniMagick::Image.open("images/#{image_name}")
 
 		image_sizes.keys.each do |key|
 			key.each do |file_name|
