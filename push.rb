@@ -654,7 +654,7 @@ class ImageProcessor
 			key.each do |file_name|
 				image.resize image_sizes[key]
 				image.format "png"
-				
+
 				dirname = File.dirname(file_name)
 				FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
 
@@ -1092,7 +1092,10 @@ def renameAndroidPackageFolders mode, identifier, project_path
 				finished_path += "/" unless finished_path.end_with? "/"
 				i += 1
 			end
-			
+	
+			dirname = File.dirname(finished_path)
+			FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
+
 			Dir.chdir(finished_path) do
 				directories = Dir['*/'] 
 				start_dir = Dir.pwd + "/" + directories[0]
