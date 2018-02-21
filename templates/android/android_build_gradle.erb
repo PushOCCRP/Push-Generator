@@ -17,11 +17,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
     defaultConfig {
         applicationId "<%= settings["android-bundle-identifier"] %>"
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode <%= settings[:build_number] %>
         versionName "<%= settings[:version_number] %>"
 
