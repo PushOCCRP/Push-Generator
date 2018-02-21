@@ -654,6 +654,10 @@ class ImageProcessor
 			key.each do |file_name|
 				image.resize image_sizes[key]
 				image.format "png"
+				
+				dirname = File.dirname(file_name)
+				FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
+
 				image.write file_name
 				FileUtils.cp(file_name, final_location)
 			end
