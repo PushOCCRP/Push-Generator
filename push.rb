@@ -16,6 +16,7 @@ require 'java-properties'
 require 'pty'
 require 'expect'
 require 'credentials_manager'
+require 'fileutils'
 
 program :name, 'Push App Generator'
 program :version, '1.1.0'
@@ -79,7 +80,6 @@ class Parser
       opts.on("-iIOS_PATH", "--ios-path=ios_path", "Path to iOS base app, if not passed the user will be prompted during the build") do |n|
       	args.ios_path = n
       end
-
 
       opts.on("-h", "--help", "Prints this help") do
         puts opts
@@ -403,6 +403,12 @@ class Generator
 	end
 
 	def self.saveFile file_name, content
+		dirname = File.dirname(file_name)
+		unless File.directory?(dirname)
+		  FileUtils.mkdir_p(dirname)
+		end
+
+		
 		if(File.exist?(file_name))
 			File.delete(file_name)
 		end
