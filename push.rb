@@ -408,7 +408,7 @@ class Generator
 		  FileUtils.mkdir_p(dirname)
 		end
 
-		
+
 		if(File.exist?(file_name))
 			File.delete(file_name)
 		end
@@ -904,7 +904,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		suffix = "-#{settings['suffix']}"
 	end
 
-	if(options[:android_path].empty?)
+	if(options[:android_path].nil? || options[:android_path].empty?)
 		p "Current path is: #{Dir.pwd}"
 		project_path = ask "Android Project Path: "
 		project_path.strip!
