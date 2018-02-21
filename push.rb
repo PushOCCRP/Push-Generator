@@ -645,7 +645,7 @@ class ImageProcessor
 
 
 	def self.process image_sizes, image_name, final_location
-		FileUtils.mkdir_p(dirname) unless File.directory?("images")
+		FileUtils.mkdir_p(dirname) unless File.directory?("images/")
 
 		image = MiniMagick::Image.open("images/#{image_name}")
 
