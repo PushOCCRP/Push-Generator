@@ -125,7 +125,6 @@ cd ../Push-Generator
 
 	> You may get an error about your account not having a device. If this happens just continue to the next step.
 
-
 1. Open XCode
 	1. File menu -> Open -> Navigate to the Push-iOS folder -> Click Open
 	1. Plug in your test device (iPhone or iPad)
@@ -139,13 +138,34 @@ cd ../Push-Generator
 	1. Go to the "Push" Project item on the left side navigator.
 	1. Make sure "Automatically manage signing" is chcecked.
 	1. In the "Signing" section, click "Register Device"
-	
+
+1. If you ran into error about devices before you can rerun ```ruby push.rb --development -m iOS -i ../Push-iOS``` and it should work through without any bugs.
+
 1. Choose your test device in the device drop down near the top of XCode
 
 1. Product menu -> Run 
 	> You may have to click "Enable" and type in your password if a "Enable Developer Mode on this Mac?" dialoug appears.
 
 ##### Android Specific Steps 
+
+1. Update Homebrew ```brew tap caskroom\versions```
+
+1. Install Java build requirements ```brew cask install java8```
+
+1. Install Gradle command line. ```brew install gradle```
+
+1. Download Android Studio from https://developer.android.com/studio/index.html
+
+1. Open the DMG file, drag the Android Studio icon to the 'Applications' folder.
+
+1. Open Android Studio, click "do not import settings"
+
+1. Click through the installation choosing "standard" when prompted. It will then download a bunch of components, let it do so.
+
+1. It'll ask you a put in your password as well as allow a system extension. Do so, and click "allow" in the lower right when the preferences open up.
+
+1.
+
 
 1. Clone all repositories
 
@@ -154,6 +174,7 @@ cd ../Push-Generator
 	git clone https://github.com/PushOCCRP/Push-Android		# If building Android
 	cd Push-Generator
 
+1. Run the generater in bootstrap mode ```ruby push.rb --development -m android -a ../Push-Android```
 
 All other folders shouldn't be touched unless you're trying to extend the system.
 
