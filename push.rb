@@ -22,7 +22,7 @@ program :name, 'Push App Generator'
 program :version, '1.1.0'
 program :description, 'A script to automatically generate iOS and Android apps for the Push ecosystem'
 
-Options = Struct.new(:file_name, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new)
+Options = Struct.new(:file_name, :upgrade, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new)
 
 Languages = { "az": "Azerbaijnai",
 			  "bg": "Bulgaria",
@@ -45,6 +45,10 @@ class Parser
         args.file_name = n
       end
 
+      opts.on("-u", "--upgrade", "Flag for upgrading the code of the apps. Exits after the upgrade is complete and build settings are ignored.") do |n|
+      	args.upgrade = true
+      end
+
       opts.on("-p", "--production", "Flag for production push") do
       	args.production = true
       end
@@ -57,7 +61,7 @@ class Parser
       	args.beta = true
       end
 
-			opts.on("-d", "--development", "Flag to set up an initial development version for using in XCode") do
+			opts.on("-d", "--development", "Flag to set up an initial development version. In Android this changes the app name to com.pushapp.press for Git purposes.") do
 				args.development = true
 			end
 
@@ -983,6 +987,8 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		FileUtils.cp("promotions/promotions#{suffix}.json", project_path + "/app/src/main/assets/promotions.json")
 	end
 
+	# If we are doing development, we have to do it with this app name. The reason being that the github repository is annoying.
+	settings['android-bundle-identifier'] = 'com.pushapp.press' if options[:development] == true
 
 	#requires https://github.com/PushOCCRP/android-rename-package
 	p "Changing Android package name to #{settings['android-bundle-identifier']}"
@@ -1131,6 +1137,52 @@ def getPreviousAndroidApplicationID project_path
 	return app_name
 end
 
+def upgrade_source_code mode, ios_path = nil, android_path = nil
+	case mode
+	when "ios"
+		upgrade_ios ios_path
+	when "android"
+		upgrade_android android_path
+	when mode.empty?
+		upgrade_ios ios_path
+		upgrade_android android_path
+	else
+		say "Invalid mode.".red
+		exit
+	end
+end
+
+def upgrade_ios path
+	if path == nil
+		say "Please use the -i flag to pass in the path for the iOS project files.".red
+		exit
+	end
+
+	system("cd #{path} && git pull -f")
+end
+
+def upgrade_android path
+	if path == nil
+		say "Please use the -a flag to pass in the path for the Android project files.".red
+		exit
+	end
+
+	say "Changing Android package name to com.pushapp.dev"
+	application_id = getPreviousAndroidApplicationID path
+
+	renameAndroidImports path, "com.pushapp.dev", application_id
+	#p exec("rp r #{project_path} --package-name #{settings['android-bundle-identifier']}")
+	renameAndroidPackageFolders 'main', "com.pushapp.dev", path
+	renameAndroidPackageFolders 'test', "com.pushapp.dev", path
+
+	system("cd #{path} && git pull -f")
+
+	renameAndroidImports path, application_id, "com.pushapp.dev"
+	#p exec("rp r #{project_path} --package-name #{settings['android-bundle-identifier']}")
+	renameAndroidPackageFolders 'main', application_id, path
+	renameAndroidPackageFolders 'test', application_id, path
+end
+
 # This takes in a message, that can be a string or an array of string, each will be printed on a different line
 def error message, exit_on_print = true
 		raise "Error message only takes 'String' or 'Array'" if !message.is_a?(Array) && !message.is_a?(String)
@@ -1143,12 +1195,22 @@ def error message, exit_on_print = true
 		exit if exit_on_print
 end
 
+
+############
+# START
+############
+
 options = Parser.parse ARGV
 
 ios_version_number = "1.0"
 ios_build_number = "1"
 android_version_number = "1.0"
 android_build_number = "1"
+
+if options[:upgrade]
+	upgrade_source_code options[:mode], options[:ios_path], options[:android_path]
+	exit
+end
 
 case options[:mode]
 when "android"

@@ -164,17 +164,22 @@ cd ../Push-Generator
 
 1. It'll ask you a put in your password as well as allow a system extension. Do so, and click "allow" in the lower right when the preferences open up.
 
-1.
-
-
 1. Clone all repositories
+```
+git clone https://github.com/PushOCCRP/Push-Generator
+git clone https://github.com/PushOCCRP/Push-Android
+```
 
-	git clone https://github.com/PushOCCRP/Push-Generator
-				# If building iOS
-	git clone https://github.com/PushOCCRP/Push-Android		# If building Android
-	cd Push-Generator
+1. We want to add specific git hooks into this repository. This is so that we don't screw up the master repositories.
 
-1. Run the generater in bootstrap mode ```ruby push.rb --development -m android -a ../Push-Android```
+```
+cd Push-Android
+bundle install
+git config core.hooksPath hooks
+cd ../Push-Generator
+```
+
+1. Run the generater in bootstrap mode ```ruby push.rb -m android -a ../Push-Android```
 
 All other folders shouldn't be touched unless you're trying to extend the system.
 
