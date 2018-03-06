@@ -1190,7 +1190,7 @@ def error message, exit_on_print = true
 		say "\n-----------------------------------------------------------------".red
 		say "    Error:\n".red
 		say "    " + message if message.is_a?(String)
-		message.each {|line| say "    " + line } if message.is_a?(Array)
+		message.each {|line| say "    " + line if line.is_a?(String) } if message.is_a?(Array)
 		say "-----------------------------------------------------------------\n".red
 		exit if exit_on_print
 end
