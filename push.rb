@@ -1131,7 +1131,7 @@ def getPreviousAndroidApplicationID project_path
 		properties = JavaProperties.load(project_path + "app/build.gradle")		
 		app_name = properties[:applicationId].tr('"', '')
 	rescue Exception => e
-		app_name = "com.push.meydan"
+		app_name = "com.pushapp.press"
 	end
 
 	return app_name
