@@ -150,7 +150,7 @@ cd ../Push-Generator
 
 1. Update Homebrew ```brew tap caskroom\versions```
 
-1. Install Java build requirements ```brew cask install java8```
+1. Install Java build requirements ```brew cask install java8``` (yes, the '8' is not a typo)
 
 1. Install Gradle command line. ```brew install gradle```
 
@@ -179,7 +179,38 @@ git config core.hooksPath hooks
 cd ../Push-Generator
 ```
 
-1. Run the generater in bootstrap mode ```ruby push.rb -m android -a ../Push-Android```
+1. Open the cloned Push-Android repository in Android Studio. This will automatically install a bunch of files that are needed.
+
+1. We now need to sign the app, so that it'll actually run on devices. There are a couple of ways to do this, and all the options are [here](https://developer.android.com/studio/publish/app-signing.html). For this we'll self-sign, since it's the easiest. Please note though, do NOT lose these keys. You won't get them back and it'll be a pain to contact Google. 
+
+    I know, this is a bit of a pain, but please bear with me, it should only take a few minutes.
+
+    1. In the menu bar, click Build > Generate Signed APK
+    1. The drop down should be appropriate, so click Next
+    1. Click 'Create New...'
+    1. In the 'Key store path: ' please put a location for your key somewhere on your local machine. Something like ```/Users/yourname/AndroidKeystore``` Note this location, because we're going to need it in a minutes.
+    1. For first 'Password' and 'Confirm' go ahead and put that in a good password you can remember.
+    1. In 'Alias' choose a name ('Push app keystore' would work well). Note this as well.
+    1. For the second password field, choose another password. I suggest using a [password manager](https://lifehacker.com/5529133/five-best-password-managers) to save these.
+    1. Keep validity to '25'
+    1. Put in your contact information for the key.
+    1. Click 'Save'
+    1. The passwords should be prefilled for you in the screen now. Click 'Remember passwords' checkbox.
+    1. Click 'Next'
+    1. Click the 'V2 (Full APK Signature)' checkbox.
+    1. Click 'Finish'
+
+1. Opens the credentials file that you created earlier. Find the line that starts with ```android-store-file-path:``` and add the path you typed in in step four above. It should look like ```android-store-file-path: /path/to/your/keystore``` on its own line.
+
+1. In the credentials file add the first password to the line beginning with ```android-store-password: ```
+
+1. Add the keystore alias name to the line ```android-key-alias:```.
+
+1. Add the second password to the line ```android-key-password:```.
+
+1. Save the credentials file.
+
+1. Go back to the command line and run the generater in bootstrap mode ```ruby push.rb -m android -a ../Push-Android```
 
 All other folders shouldn't be touched unless you're trying to extend the system.
 
