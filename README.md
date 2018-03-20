@@ -119,9 +119,13 @@ cd ../Push-Generator
 	1. Scroll down to the "Security" section, and click the "Generate Password..." link in the right column
 	1. Type in a name: "Push Generator" is a good one.
 	1. Since your normal username is now save, we have to remove it first. Go to your terminal and type ```fastlane fastlane-credentials remove```. Then type in your Apple Id email.
-	1. Run ```ruby push.rb --development -m iOS -i ../Push-iOS``` again
-	1. When it asks for your user password copy and paste the password that was just generated into the terminal.
+	1. ```cd ../Push-iOS```
+	1. ```fastlane fastlane-credentials add```
+	1. Type in your apple id and then the password we generated above.
+	1. ```cd ../Push-Generator```
 	1. Run ```ruby push.rb --development -m iOS -i ../Push-iOS``` again (yes, again)
+
+	> If this still doesn't work try to do the ```remove``` feature in both the ```Push-Generator``` and ```Push-iOS``` folder.
 
 	> You may get an error about your account not having a device. If this happens just continue to the next step.
 
