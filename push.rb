@@ -235,6 +235,10 @@ class Generator
 			settings['launch-background-color'] = '#FFFFFF'
 		end
 
+		if(settings.has_key?('login-required') == false)
+			settings['login-required'] = 'false'
+		end
+
 		if(settings.has_key?('credentials-file') == false)
 			settings['credentials-file'] = 'push-mobile-credentials.yml'
 		end

@@ -68,6 +68,8 @@ platform :ios do
     produce(
       username: "<%= settings[:credentials]['apple-developer-email']%>",
       app_identifier: "<%= settings['ios-bundle-identifier'] %>",
+      company_name: "<%= settings['company-name'] %>",
+      itc_team_name: "<%= settings['company-name'] %>",
       app_name: "<%= settings['name'] %>",
       language: "<%= settings[:itunes_languages].join(",") %>"
     )
@@ -94,6 +96,7 @@ platform :ios do
       username: "<%= settings[:credentials]['apple-developer-email']%>",
       app_identifier: "<%= settings['ios-bundle-identifier'] %>",
       company_name: "<%= settings['company-name'] %>",
+      itc_team_name: "<%= settings['company-name'] %>",
       app_name: "<%= settings['name'] %>",
       language: "<%= settings[:itunes_languages].join(",") %>"
     )
@@ -176,25 +179,13 @@ platform :ios do
     # use the UID of the newly created provisioning profile
     ENV["PROFILE_UUID"] = lane_context[SharedValues::SIGH_UDID]
 
-    update_project_provisioning(
-        xcodeproj: 'build_files/ios/project/Push.xcodeproj',
-        target_filter: '.*',
-        build_configuration: '.*'
-    )
+    build_app(scheme: "Push", 
+              include_bitcode: true,
+              )
 
-    gym(
-      export_method: "ad-hoc",
-      clean: true,
-      scheme: 'Push',
-      
-    ) # Build your app - more options available
+    sync_code_signing(type: "appstore")    # see code signing guide for more information
 
-    #hockey(
-    #  api_token: "<%= settings[:credentials]['hockey-secret'] %>",
-    #  notes: options[:notes],
-    #  #public_identifier: "<%= settings[:credentials]['hockey-key'] %>"
-    #)
-    pilot(
+    upload_to_testflight(
       changelog: options[:notes]
     )
 
