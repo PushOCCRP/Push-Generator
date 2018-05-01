@@ -22,7 +22,7 @@ program :name, 'Push App Generator'
 program :version, '1.1.0'
 program :description, 'A script to automatically generate iOS and Android apps for the Push ecosystem'
 
-Options = Struct.new(:file_name, :upgrade, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new)
+Options = Struct.new(:file_name, :upgrade, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new, :certs)
 
 Languages = { "az": "Azerbaijnai",
 			  "bg": "Bulgaria",
@@ -73,6 +73,10 @@ class Parser
       	args.new = true
       end
 
+      opts.on("-c", "--certs", "Flag for generating push notification certificates and prepping them for proper installation. Right now only works for iOS.") do
+      	args.certs = true
+      end
+
       opts.on("-mMODE", "--mode=mode", "Flag for Android (android) or iOS (ios), e.g. -m android") do |n|
       	args.mode = n
       end
@@ -98,7 +102,7 @@ end
 
 class Generator
 
-	def self.generate options, version_number, build_number, mode, production=false
+	def self.generate options, version_number, build_number, mode, production=false, settings_only=false
 		#1.) Check if there's a file indicated in the call - DONE
 		#2.) If there's not a file, look for push-mobile.haml - DONE
 		file_content = load_file(options[:file_name], 'push-mobile.yml')
@@ -144,6 +148,9 @@ class Generator
 		end
 
 		settings[:debug] = !production
+
+		return settings if settings_only == true
+
 #		pp settings
 		#5.) Parse file into iOS format
 		case mode
@@ -494,6 +501,10 @@ class ImageProcessor
 	end
 
 	def self.process_android_logo image_name, final_location
+		feature_graphic_image_sizes = {
+			["images/images-generated/andoird/feature_graphic.png"] => "1024x500"
+		}
+
 		xxhdpi_image_sizes = {
 		 ["images/images-generated/android/ic_launcher.png"] => "144x144",
 		}
@@ -511,6 +522,7 @@ class ImageProcessor
 			["images/images-generated/android/ic_launcher.png"] => "48x48",
 		}
 
+		process feature_graphic_image_sizes, image_name, (final_location + "/mipmap-xxxhdpi")
 		process xxhdpi_image_sizes, image_name, (final_location + "/mipmap-xxhdpi")
 		process drawable_image_sizes, image_name, (final_location + "/drawable")
 		process xhdpi_image_sizes, image_name, (final_location + "/mipmap-xhdpi")
@@ -1046,6 +1058,49 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	p exec("cd #{project_path} && fastlane #{lane} apk:#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk") if(lane != nil)
 end
 
+def generate_push_certs options
+	case options[:mode]
+	when "android"
+		p "Android push certificate development not available at the moment!".blue
+	when "ios"
+		p "Generating iOS push certificates 🤜".blue
+
+		if(options[:ios_path].nil? || options[:ios_path].empty?)
+			p "Current path is: #{Dir.pwd}"
+			project_path = ask "iOS Project Path: "
+			project_path.strip!
+		else
+			project_path = options[:ios_path]
+			p "iOS build path is #{project_path}"
+		end
+
+		if(File.exist?(project_path) == false)
+			p "iOS build path directory not found."
+			abort
+		end
+
+		settings = Generator.generate options, '0','0', :iOS
+
+		system("cd #{project_path}")
+		system("fastlane pem -a #{settings['ios-bundle-identifier']} -u #{settings[:credentials]['apple-developer-email']} -b #{settings[:credentials]['apple-developer-team-id']} -e ./credentials/push/ios/#{settings['ios-bundle-identifier']}")
+
+		say "Created/renewed our push certificates! 📜🏆".green 
+
+		say "Converting the certificates to the proper format for Uniqush...".blue
+
+		system ("openssl pkcs12 -in ./credentials/push/ios/#{settings['ios-bundle-identifier']}/production_#{settings['ios-bundle-identifier']}.p12 -out ./credentials/push/ios/#{settings['ios-bundle-identifier']}/production_#{settings['ios-bundle-identifier']}_cert.pem -nodes -passin pass:")
+		system ("cp ./credentials/push/ios/#{settings['ios-bundle-identifier']}/production_#{settings['ios-bundle-identifier']}.pem ./credentials/push/ios/#{settings['ios-bundle-identifier']}/prodcution_#{settings['ios-bundle-identifier']}_key.pem")
+
+		say "Stripping out the RSA protection...".blue
+
+		system ("openssl rsa -in ./credentials/push/ios/#{settings['ios-bundle-identifier']}/prodcution_#{settings['ios-bundle-identifier']}_key.pem -out ./credentials/push/ios/#{settings['ios-bundle-identifier']}/prodcution_#{settings['ios-bundle-identifier']}_key.pem")
+
+		say "Finished! The certs and keys are available at ".green + "./credentials/push/ios/#{settings['ios-bundle-identifier']}".yellow + " 🥁"
+
+		say "You can now upload these to your Push backend at #{settings[:credentials]['server-url']}/notifications/cert_upload"
+	end
+end
+
 def binaryName settings, suffix
 	return "#{settings['short-name']}_#{Time.now.strftime("%Y%m%d_%H%M%S")}_#{suffix}"
 end
@@ -1213,6 +1268,11 @@ android_build_number = "1"
 
 if options[:upgrade]
 	upgrade_source_code options[:mode], options[:ios_path], options[:android_path]
+	exit
+end
+
+if options[:certs]
+	generate_push_certs options
 	exit
 end
 
