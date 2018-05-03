@@ -22,6 +22,7 @@ buildTypes {
         resValue "string", "available_languages", "<%= settings["languages"].join(',') %>"
         resValue "string", "donation_url", "<%= settings[:credentials]['donation-url'] %>"
         resValue "string", "show_author", "<%= settings["show-author"] %>"
+        resValue "string", "debug", "<%= setting[:debug] ? "true" : "false" %>"
         resValue "string", "login_required", "<%= setting["login-required"] ? "true" : "false" %>"
     }
 }
