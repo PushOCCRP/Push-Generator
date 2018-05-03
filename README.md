@@ -230,6 +230,8 @@ All other folders shouldn't be touched unless you're trying to extend the system
 -- Set the path for the Android code base. If not set you will be prompted to type it in
 - -i /ios_path_name/
 -- Set the path for the iOS code base. If not set you will be prompted to type it in
+- -d /development/
+-- Flag to set up an initial development version. In Android this changes the app name to com.pushapp.press for Git purposes.
 - -m /build_mode/
 -- /Options: 'ios' or 'android'
 -- Set whether to build iOS or Android. If not set both are built.
