@@ -1009,6 +1009,9 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	#requires https://github.com/PushOCCRP/android-rename-package
 	p "Changing Android package name to #{settings['android-bundle-identifier']}"
 	renameAndroidImports project_path, settings['android-bundle-identifier'], old_application_id
+	# Because there's a weird edge case where it can get stuck, we also rename it from com.pushapp.press
+	renameAndroidImports project_path, settings['android-bundle-identifier'], "com.pushapp.press"
+
 	#p exec("rp r #{project_path} --package-name #{settings['android-bundle-identifier']}")
 	renameAndroidPackageFolders 'main', settings['android-bundle-identifier'], project_path
 	renameAndroidPackageFolders 'test', settings['android-bundle-identifier'], project_path
