@@ -10,7 +10,7 @@ buildTypes {
         resValue "string", "donation_url", "<%= settings[:credentials]['donation-url'] %>"
         resValue "string", "show_author", "<%= settings["show-author"] %>"
         resValue "string", "debug", "<%= setting[:debug] ? "true" : "false" %>"
-        resValue "string", "login_required", "<%= setting["login-required"] ? "true" : "false" %>"
+        resValue "string", "login_required", "<%= setting["login-required"] == "true" ? "true" : "false" %>"
     }
     release {
         resValue "string", "server_url", "<%= settings[:credentials]['server-url'] %>"
@@ -23,7 +23,7 @@ buildTypes {
         resValue "string", "donation_url", "<%= settings[:credentials]['donation-url'] %>"
         resValue "string", "show_author", "<%= settings["show-author"] %>"
         resValue "string", "debug", "<%= setting[:debug] ? "true" : "false" %>"
-        resValue "string", "login_required", "<%= setting["login-required"] ? "true" : "false" %>"
+        resValue "string", "login_required", "<%= setting["login-required"] == "true" ? "true" : "false" %>"
     }
 }
 //Not my favorite choice, but to be honest, you should never get this anyways

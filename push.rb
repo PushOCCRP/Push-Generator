@@ -22,7 +22,7 @@ program :name, 'Push App Generator'
 program :version, '1.1.0'
 program :description, 'A script to automatically generate iOS and Android apps for the Push ecosystem'
 
-Options = Struct.new(:file_name, :upgrade, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new, :certs)
+Options = Struct.new(:file_name, :upgrade, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new, :certs, :force)
 
 Languages = { "az": "Azerbaijnai",
 			  "bg": "Bulgaria",
@@ -39,7 +39,7 @@ class Parser
     args = Options.new(options)
 
     opt_parser = OptionParser.new do |opts|
-      opts.banner = "Usage: example.rb [options]"
+      opts.banner = "Usage: bundle exec ruby push.rb [options]"
 
       opts.on("-fFILE", "--file=FILE", "File name for settings") do |n|
         args.file_name = n
@@ -76,6 +76,10 @@ class Parser
       opts.on("-c", "--certs", "Flag for generating push notification certificates and prepping them for proper installation. Right now only works for iOS.") do
       	args.certs = true
       end
+
+      opts.on("--force", "Flag for forcing pem regeneration. Ignored by the rest of the commands.") do
+      	args.force = true
+	    end
 
       opts.on("-mMODE", "--mode=mode", "Flag for Android (android) or iOS (ios), e.g. -m android") do |n|
       	args.mode = n
@@ -704,7 +708,7 @@ end
 
 def generateIOS options, version_number = "1.0", build_number = "1"
 
-	settings = Generator.generate options, version_number.strip!, build_number.strip!, :iOS
+	settings = Generator.generate options, version_number.strip, build_number.strip, :iOS
 
 	if(options[:ios_path].nil? || options[:ios_path].empty?)
 		p "Current path is: #{Dir.pwd}"
@@ -1036,17 +1040,17 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	elsif(options[:development] == true)
 		final_name_suffix = "dev"
 	elsif(options[:production] == true)
-		command = "supply init --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
+		command = "bundle exec fastlane supply init --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
 		p command
 		p system(command)
-		command = "supply --apk #{project_path}/app/build/outputs/apk/release/app-release.apk --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
+		command = "bundle exec fastlane supply --apk #{project_path}/app/build/outputs/apk/release/app-release.apk --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
 		p command
 		success = p system(command)
 		if(success == false)
 			message = []
 			message << "Error uploading APK, if this is the very first build of a new app you have to upload the APK file manually".white.on_red
 			message << "The production APK is found at #{project_path}/app/build/outputs/apk/app-release.apk".white.on_red
-			message << "Go to https://play.google.com/apps to create the application in the Google Play Store and upload the APK.".white.on_red
+			message << "Go to https://play.google.com/apps/publish/ to create the application in the Google Play Store and upload the APK.".white.on_red
 			error message, false
 		end
 		final_name_suffix = "_prod"
@@ -1061,7 +1065,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	p exec("cd #{project_path} && fastlane #{lane} apk:#{Dir.pwd}/finals/android/#{binaryName(settings, final_name_suffix)}.apk") if(lane != nil)
 end
 
-def generate_push_certs options
+def generate_push_certs options, force=false
 	case options[:mode]
 	when "android"
 		p "Android push certificate development not available at the moment!".blue
@@ -1085,7 +1089,11 @@ def generate_push_certs options
 		settings = Generator.generate options, '0','0', :iOS
 
 		system("cd #{project_path}")
-		system("fastlane pem -a #{settings['ios-bundle-identifier']} -u #{settings[:credentials]['apple-developer-email']} -b #{settings[:credentials]['apple-developer-team-id']} -e ./credentials/push/ios/#{settings['ios-bundle-identifier']}")
+		if(force == true)
+			system("fastlane pem -a #{settings['ios-bundle-identifier']} -u #{settings[:credentials]['apple-developer-email']} -b #{settings[:credentials]['apple-developer-team-id']} -e ./credentials/push/ios/#{settings['ios-bundle-identifier']} --force")
+		else
+			system("fastlane pem -a #{settings['ios-bundle-identifier']} -u #{settings[:credentials]['apple-developer-email']} -b #{settings[:credentials]['apple-developer-team-id']} -e ./credentials/push/ios/#{settings['ios-bundle-identifier']}")
+		end
 
 		say "Created/renewed our push certificates! 📜🏆".green 
 
@@ -1275,7 +1283,11 @@ if options[:upgrade]
 end
 
 if options[:certs]
-	generate_push_certs options
+	if options[:force] == true
+		generate_push_certs options, true
+	else
+		generate_push_certs options
+	end
 	exit
 end
 

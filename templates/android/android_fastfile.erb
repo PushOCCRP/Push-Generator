@@ -27,16 +27,11 @@ platform :android do
 
   desc "Submit a new Beta Build to Hockey Beta"
   lane :beta do |options|
-    #gradle(task: "assembleRelease")
-    hockey(
-      apk: options[:apk],
-      api_token: "<%= settings[:credentials]['hockey-secret'] %>",
-      notes: options[:notes],
-      #public_identifier: "<%= settings[:credentials]['hockey-key'] %>"
-  )
-    
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
+    gradle(
+      task: "assemble",
+      build_type: "Release"
+    )
+    upload_to_play_store(track: 'beta')
   end
 
   desc "Run all compile options but do not submit"
@@ -53,7 +48,7 @@ platform :android do
       task: "assemble",
       build_type: "Release"
     )
-    supply
+    upload_to_play_store
   end
 
   # You can define as many lanes as you want
