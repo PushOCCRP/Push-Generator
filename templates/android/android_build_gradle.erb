@@ -1,15 +1,17 @@
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
         maven { url 'https://maven.google.com' }
         maven { url 'https://maven.fabric.io/public' }
+        google()
+        maven { url "https://jitpack.io" }
+        jcenter()
     }
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
-        classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.google.gms:google-services:3.3.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
 
@@ -70,6 +72,7 @@ android {
     }
 }
 
+
 apply from: 'safe_variables.gradle', to: android
 
 repositories {
@@ -81,58 +84,55 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/YouTubeAndroidPlayerApi.jar')
-    compile 'com.android.support:appcompat-v7:27.+'
-    compile 'com.android.support:design:27.+'
-    compile 'com.android.support:recyclerview-v7:27.+'
-    compile 'com.android.support:cardview-v7:27.+'
-    compile 'com.android.support:support-annotations:27.+'
-    compile files('libs/android-query-full.0.26.8.jar')
-    compile 'com.viewpagerindicator:library:2.4.1@aar'
-    compile 'com.github.siyamed:android-shape-imageview:0.9@aar'
-    compile 'com.github.ksoichiro:android-observablescrollview:1.5.2'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('libs/YouTubeAndroidPlayerApi.jar')
+    implementation 'com.android.support:appcompat-v7:27.+'
+    implementation 'com.android.support:design:27.+'
+    implementation 'com.android.support:recyclerview-v7:27.+'
+    implementation 'com.android.support:cardview-v7:27.+'
+    implementation 'com.android.support:support-annotations:27.+'
+    implementation files('libs/android-query-full.0.26.8.jar')
+    implementation 'com.viewpagerindicator:library:2.4.1@aar'
+    implementation 'com.github.siyamed:android-shape-imageview:0.9@aar'
+    implementation 'com.github.ksoichiro:android-observablescrollview:1.5.2'
 
     // push library dependecies
-    compile 'com.android.support:support-v13:27.+'
-    compile 'com.google.android.gms:play-services-base:11.8.0'
-    compile 'com.google.android.gms:play-services-analytics:11.8.0'
-    compile 'com.google.android.gms:play-services-gcm:11.8.0'
+    implementation 'com.android.support:support-v13:27.+'
+    implementation 'com.google.android.gms:play-services-base:15.0.1'
+    implementation 'com.google.android.gms:play-services-analytics:15.0.2'
 
     //Retrofit + Http Client
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.squareup.okhttp:okhttp:2.3.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    implementation 'com.squareup.retrofit:retrofit:1.9.0'
+    implementation 'com.squareup.okhttp:okhttp:2.3.0'
+    implementation 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     //library dependency
     //Gson (json) parser
-    compile 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.code.gson:gson:2.8.0'
     //ReactiveX + Android support
-    compile 'io.reactivex:rxjava:1.0.10'
-    compile 'io.reactivex:rxandroid:0.24.0'
-    compile 'com.github.oxo42:stateless4j:2.5.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+    implementation 'io.reactivex:rxjava:1.0.10'
+    implementation 'io.reactivex:rxandroid:0.24.0'
+    implementation 'com.github.oxo42:stateless4j:2.5.0'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
-    compile 'com.android.volley:volley:1.0.0'
+    implementation 'com.android.volley:volley:1.0.0'
 
-    // Glide Image Provider.
-    compile group: 'com.github.bumptech.glide', name: 'glide', version: '4.3.1'
-    annotationProcessor group: 'com.github.bumptech.glide', name: 'compiler', version: '4.3.1'
+    // Glide Image Provider
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    annotationProcessor group: 'com.github.bumptech.glide', name: 'compiler', version: '4.7.1'
 
-    // https://mvnrepository.com/artifact/org.yaml/snakeyaml
-    compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
-    compile 'com.google.firebase:firebase-core:11.8.0'
-    compile "com.google.firebase:firebase-messaging:11.8.0"
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+    implementation 'com.google.firebase:firebase-core:15.0.2'
+    implementation "com.google.firebase:firebase-messaging:15.0.2"
 
-    //compile 'com.google.android.gms:play-services-analytics:8.3.0'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
-    androidTestCompile 'com.android.support:support-annotations:27.+'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support:support-annotations:27.+'
 
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
     // Set this dependency to use JUnit 4 rules
-    androidTestCompile 'com.android.support.test:rules:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
     // Set this dependency to build and run Espresso tests
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     // Set this dependency to build and run UI Automator tests
     //androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 
@@ -140,9 +140,3 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
-
-
-
-
-
-
