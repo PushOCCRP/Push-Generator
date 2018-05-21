@@ -193,15 +193,13 @@ bundle install
 git config core.hooksPath hooks
 cd ../Push-Generator
 ```
-
 1. Create the app in the [Google Play Developer Console](https://play.google.com/apps/publish)
-1. Create the app in the [Firebase Conosle](https://console.firebase.google.com/?pli=1)
-1. After choosing your new app, look to the left side of the conosle, click the "notifications" menu item.
+1. Create the app in the [Firebase Console](https://console.firebase.google.com/?pli=1)
+1. After choosing your new app in the Firebase Console, you should have a page that says "Get started here." Click the "Add Firebase to your Android app"
 1. Enter the app id and name (make sure it's the same as in the push generator configuration file)
 1. A file called ```google-services.json``` should automatically download.
 1. Copy the ```google-services.json``` file to the ```/google-services/``` folder in the generator.
 1. Run the generator https://github.com/PushOCCRP/Push-Generator in offline mode with the ```-o``` flag
-
 1. Open the cloned Push-Android repository in Android Studio. This will automatically install a bunch of files that are needed.
 
 1. We now need to sign the app, so that it'll actually run on devices. There are a couple of ways to do this, and all the options are [here](https://developer.android.com/studio/publish/app-signing.html). For this we'll self-sign, since it's the easiest. Please note though, do NOT lose these keys. You won't get them back and it'll be a pain to contact Google. 
