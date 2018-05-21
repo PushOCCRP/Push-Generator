@@ -197,8 +197,9 @@ cd ../Push-Generator
 1. Create the app in the [Firebase Console](https://console.firebase.google.com/?pli=1)
 1. After choosing your new app in the Firebase Console, you should have a page that says "Get started here." Click the "Add Firebase to your Android app"
 1. Enter the app id and name (make sure it's the same as in the push generator configuration file)
-1. A file called ```google-services.json``` should automatically download.
-1. Copy the ```google-services.json``` file to the ```/google-services/``` folder in the generator.
+1. Click the "Download google-services.json" button.
+1. Click the small link in the lower left that says "Skip to the console"
+1. Copy the ```google-services.json``` file that was just downloaded to the ```/google-services/``` folder in the generator.
 1. Run the generator https://github.com/PushOCCRP/Push-Generator in offline mode with the ```-o``` flag
 1. Open the cloned Push-Android repository in Android Studio. This will automatically install a bunch of files that are needed.
 
