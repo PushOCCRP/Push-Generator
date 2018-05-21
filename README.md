@@ -38,10 +38,22 @@ _If you don't have Ruby installed already you must do so. This is somewhat a bit
 1. Install Ruby
 	1. ```rvm install $(<.ruby-version)```
 	1. Wait awhile. Depending on your machine this can take quite a bit of time.	
+	1. rvm --default use $(<.ruby-version)```
 	1. Install the main bundler gem ```gem install bundler```
 	1. ```ruby -v``` should show a proper version of Ruby.
 1. Install ImageMagick
 	1. ```brew install imagemagick```
+1. Pull the generator code
+	1. ```git clone https://github.com/PushOCCRP/Push-Generator```
+	1. ```cd Push-Generator```
+1. Install all the gems needed
+	1. ```bundle install```
+1. If you've never opened XCode before, do so now, accept the terms of service and let the software install all the components.
+1. After XCode does its thing go back to the terminal and make sure that the system is using the right version of tools. ```sudo xcode-select -s /Applications/Xcode.app/Contents/Developer```
+1. The repositories come with sample images, but you should replace them. There are two:
+	- A square image at least 512x512 for the icon logo and launch screen, I usually call this one ```logo-<<name>>".png```
+	- An image wider than it is tall for the top navigation bar. I usually call this one ```logo-navbar-<<name>>.png```
+1. Place the images in the ./images folder
 
 ##### iOS Specific Steps
 
@@ -52,15 +64,8 @@ _If you're starting a new project_
 
 ```
 git clone https://github.com/PushOCCRP/Push-iOS
-git clone https://github.com/PushOCCRP/Push-Android
-git clone https://github.com/PushOCCRP/Push-Generator
 ```
 
-```
-cd Push-iOS
-git checkout tor      # This is the main working branch at the moment
-cd ../Push-Generator
-```
 ##### Steps For All Targets
 1. Rename the customization file.
 
@@ -72,7 +77,7 @@ cd ../Push-Generator
 
 1. Comment out line starting with ```suffix```
 
-1. Change the line ```credentials-file: "creds-occrp.yml"``` to ```credentials-file: "push-mobile-credentials.yml"```
+1. Change the line ```credentials-file: "push-mobile-credentials-template.yml"``` to ```credentials-file: "creds.yml"```
 
 1. Save file
 
@@ -90,8 +95,10 @@ cd ../Push-Generator
 	mkdir images/images-generated
 	mkdir images/images-generated/ios
 	mkdir ios
-	touch about-html/about_text-en.html
+	touch about-html/about_text-en-push.html
 ```
+
+1. You need move over images for your organization. There are two specifically you'll n
 
 1. Install Ruby gems that are needed
 
@@ -101,11 +108,11 @@ cd ../Push-Generator
 
 ```
 	cd ../Push-iOS
-	pod install
+	pod update
 	bundle update
 	cd ../Push-Generator
 ```
-1. Run the generater in bootstrap mode ```ruby push.rb --development -m iOS -i ../Push-iOS```
+1. Run the generater in bootstrap mode ```bundle exec ruby push.rb --development -m iOS -i ../Push-iOS```
 
 	> If you get an error about PNG's you may have to install ImageMagick
 	> First, install [Homebrew](https://brew.sh/) if you don't have it already.
@@ -114,18 +121,22 @@ cd ../Push-Generator
 	> If this is your first time you will have to log into your Apple Developer Account, so watch out.
 
 	> If you're using 2-Factor Authentication on your Apple account (you should) it gets more difficult. Follow the following steps:
-	1. Visit appleid.apple.com/account/manage
+	1. ```cd ../Push-iOS```
+	1. ```bundle exec fastlane cert```
+	1. Go through the whole process of logging in, generating the key and continuing
+
+<!-- 	1. Visit appleid.apple.com/account/manage
 	1. Login, persumably using your two factor auth.
 	1. Scroll down to the "Security" section, and click the "Generate Password..." link in the right column
 	1. Type in a name: "Push Generator" is a good one.
-	1. Since your normal username is now save, we have to remove it first. Go to your terminal and type ```fastlane fastlane-credentials remove```. Then type in your Apple Id email.
+	1. Since your normal username is now save, we have to remove it first. Go to your terminal and type ```bundle exec fastlane fastlane-credentials remove```. Then type in your Apple Id email.
 	1. ```cd ../Push-iOS```
-	1. ```fastlane fastlane-credentials add```
+	1. ```bundle exec fastlane fastlane-credentials add```
 	1. Type in your apple id and then the password we generated above.
 	1. ```cd ../Push-Generator```
-	1. Run ```ruby push.rb --development -m iOS -i ../Push-iOS``` again (yes, again)
+	1. Run ```bundle exec ruby push.rb --development -m iOS -i ../Push-iOS``` again (yes, again)
 
-	> If this still doesn't work try to do the ```remove``` feature in both the ```Push-Generator``` and ```Push-iOS``` folder.
+	> If this still doesn't work try to do the ```remove``` feature in both the ```Push-Generator``` and ```Push-iOS``` folder. -->
 
 	> You may get an error about your account not having a device. If this happens just continue to the next step.
 
@@ -152,7 +163,7 @@ cd ../Push-Generator
 
 ##### Android Specific Steps 
 
-1. Update Homebrew ```brew tap caskroom\versions```
+1. Update Homebrew ```brew tap caskroom/versions```
 
 1. Install Java build requirements ```brew cask install java8``` (yes, the '8' is not a typo)
 
@@ -182,6 +193,14 @@ bundle install
 git config core.hooksPath hooks
 cd ../Push-Generator
 ```
+
+1. Create the app in the [Google Play Developer Console](https://play.google.com/apps/publish)
+1. Create the app in the [Firebase Conosle](https://console.firebase.google.com/?pli=1)
+1. After choosing your new app, look to the left side of the conosle, click the "notifications" menu item.
+1. Enter the app id and name (make sure it's the same as in the push generator configuration file)
+1. A file called ```google-services.json``` should automatically download.
+1. Copy the ```google-services.json``` file to the ```/google-services/``` folder in the generator.
+1. Run the generator https://github.com/PushOCCRP/Push-Generator in offline mode with the ```-o``` flag
 
 1. Open the cloned Push-Android repository in Android Studio. This will automatically install a bunch of files that are needed.
 
