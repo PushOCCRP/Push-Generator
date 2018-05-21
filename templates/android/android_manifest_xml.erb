@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!--<uses-permission android:name="com.njnewscommons.route40.permission.C2D_MESSAGE" />-->
+    <!--<uses-permission android:name="<%= settings["android-bundle-identifier"] %>.permission.C2D_MESSAGE" />-->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
     <!--<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />-->
@@ -77,21 +77,21 @@
         </activity>
 
         <service
-            android:name="com.njnewscommons.route40.util.gcm.IDListenerService">
+            android:name="<%= settings["android-bundle-identifier"] %>.util.gcm.IDListenerService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name="com.njnewscommons.route40.util.gcm.ListenerService">
+            android:name="<%= settings["android-bundle-identifier"] %>.util.gcm.ListenerService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <service
-            android:name="com.njnewscommons.route40.util.gcm.RegistrationIntentService"
+            android:name="<%= settings["android-bundle-identifier"] %>.util.gcm.RegistrationIntentService"
             android:exported="false">
         </service>
 
