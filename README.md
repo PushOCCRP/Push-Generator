@@ -200,9 +200,12 @@ cd ../Push-Generator
 1. Click the "Download google-services.json" button.
 1. Click the small link in the lower left that says "Skip to the console"
 1. Copy the ```google-services.json``` file that was just downloaded to the ```/google-services/``` folder in the generator.
+1. Add a suffix to your google-service.json file the same as you set in the settings.yml file earlier.
 1. Run the generator https://github.com/PushOCCRP/Push-Generator in offline mode with the ```-o``` flag
 1. Open the cloned Push-Android repository in Android Studio. This will automatically install a bunch of files that are needed.
-
+1. We need to install the NDK. 
+	1. File menu -> Project Structure -> Install NDK
+	1. Wait awhile.
 1. We now need to sign the app, so that it'll actually run on devices. There are a couple of ways to do this, and all the options are [here](https://developer.android.com/studio/publish/app-signing.html). For this we'll self-sign, since it's the easiest. Please note though, do NOT lose these keys. You won't get them back and it'll be a pain to contact Google. 
 
     I know, this is a bit of a pain, but please bear with me, it should only take a few minutes.
