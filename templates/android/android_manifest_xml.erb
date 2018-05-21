@@ -26,7 +26,7 @@
 
 
     <application
-        android:name="com.njnewscommons.route40.PushApplication"
+        android:name="<%= settings["android-bundle-identifier"] %>.PushApplication"
         android:allowBackup="true"
         android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
@@ -37,12 +37,12 @@
             android:theme="@style/MyMaterialTheme" >
         </activity>
         <activity
-            android:name="com.njnewscommons.route40.AboutActivity"
+            android:name="<%= settings["android-bundle-identifier"] %>.AboutActivity"
             android:label="@string/title_activity_detail_post"
             android:theme="@style/MyMaterialTheme" >
         </activity>
         <activity
-            android:name="com.njnewscommons.route40.DetailPostActivity"
+            android:name="<%= settings["android-bundle-identifier"] %>.DetailPostActivity"
             android:label="@string/title_activity_detail_post"
             android:theme="@style/MyMaterialTheme"
             android:screenOrientation="portrait"
@@ -50,23 +50,23 @@
             android:parentActivityName=".HomeActivity">
         </activity>
         <activity
-            android:name="com.njnewscommons.route40.CategoryActivity"
+            android:name="<%= settings["android-bundle-identifier"] %>.CategoryActivity"
             android:label="@string/app_name"
             android:theme="@style/MyMaterialTheme"
         />
         <activity
-            android:name="com.njnewscommons.route40.YouTubeActivity"
+            android:name="<%= settings["android-bundle-identifier"] %>.YouTubeActivity"
             android:label="YouTube Player"
             android:theme="@style/MyMaterialTheme"
         />
         <activity
-            android:name="com.njnewscommons.route40.NotificationHandler"
+            android:name="<%= settings["android-bundle-identifier"] %>.NotificationHandler"
             android:label="@string/title_activity_detail_post"
             android:parentActivityName=".HomeActivity"
             android:theme="@style/MyMaterialTheme" >
         </activity>
         <activity
-            android:name="com.njnewscommons.route40.HomeActivity"
+            android:name="<%= settings["android-bundle-identifier"] %>.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Toolbar" >
             <intent-filter>
