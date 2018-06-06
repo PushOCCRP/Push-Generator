@@ -9,7 +9,7 @@ require 'fileutils'
 require 'find'
 require 'mini_magick'
 require 'pp'
-require 'colorize'
+#require 'colorize'
 require 'commander/import'
 require 'open3'
 require 'java-properties'
@@ -258,7 +258,7 @@ class Generator
 	end
 
 	def self.verify_credentials_format credentials
-		settings_to_verify = ['server-url', 'origin-url', 'hockey-key', 'hockey-secret', 'uniqush', 'play-store-app-number', 'fabric-key', 'apple-developer-email','apple-developer-team-id']
+		settings_to_verify = ['server-url', 'origin-url', 'uniqush', 'play-store-app-number', 'fabric-key', 'apple-developer-email','apple-developer-team-id']
 		settings_to_verify.each do |setting|
 			self.check_for_setting(setting, credentials)
 		end
@@ -962,11 +962,23 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 		return
 	end
 
+	if(!File.file?("./google-services-account/google-services-account#{suffix}.json"))
+		message = []	
+		message << "    No " + "google-services-account.json".yellow + " file found for "+"#{settings['suffix']}".green
+		message << "    You probably need to create one still."
+		message << "\n"
+		message << "    Instructions can be found in the README.md files, but here are some tips:"
+		message << "    To create the file go here: https://docs.fastlane.tools/getting-started/android/setup/"
+		message << "    Copy the downloaded .json file to the "+"./google-services-account".green + " folder in this repository"
+		error message
+		return
+	end
+
 	# First we have to get the previous name being set
 	old_application_id = getPreviousAndroidApplicationID project_path
 
-	FileUtils.cp("./google-service/google-services#{suffix}.json", keys_final_location + "/google-services.json");
-
+	FileUtils.cp_r("./google-service/google-services#{suffix}.json", keys_final_location + "/google-services.json", remove_destination: true)
+	FileUtils.cp_r("./google-services-account/google-services-account#{suffix}.json", keys_final_location + "/google-services-account.json", remove_destination: true)
 	FileUtils.cp("./android/safe_variables.gradle", keys_final_location)
 	FileUtils.cp("./android/colors.xml", keys_final_location + "/src/main/res/values/")
 	FileUtils.cp("./android/AndroidManifest.xml", keys_final_location + "/src/main/")
@@ -1040,12 +1052,15 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 	elsif(options[:development] == true)
 		final_name_suffix = "dev"
 	elsif(options[:production] == true)
-		command = "bundle exec fastlane supply init --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
-		p command
-		p system(command)
-		command = "bundle exec fastlane supply --apk #{project_path}/app/build/outputs/apk/release/app-release.apk --json_key '#{settings[:credentials]['android-dev-console-json-path']}' --package_name #{settings['android-bundle-identifier']}"
-		p command
-		success = p system(command)
+		Dir.chdir(project_path) do
+			command = "bundle exec fastlane supply init --json_key ./app/google-services-account.json --package_name #{settings['android-bundle-identifier']}"
+			p command
+			p system(command)
+			command = "bundle exec fastlane supply --apk #{project_path}/app/build/outputs/apk/release/app-release.apk --json_key ./app/google-services-account.json --package_name #{settings['android-bundle-identifier']}"
+			p command
+			success = p system(command)
+		end
+		
 		if(success == false)
 			message = []
 			message << "Error uploading APK, if this is the very first build of a new app you have to upload the APK file manually".white.on_red

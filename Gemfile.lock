@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/fastlane/fastlane.git
-  revision: ee02252d6ad3ce63e5063f8256d6f08c6286a191
+  revision: 3e54e3e93fc7c4b3e6f8ff8b51101418cfb3b13b
   specs:
-    fastlane (2.95.0)
+    fastlane (2.97.0)
       CFPropertyList (>= 2.3, < 4.0.0)
       addressable (>= 2.3, < 3.0.0)
       babosa (>= 1.0.2, < 2.0.0)
@@ -17,7 +17,7 @@ GIT
       faraday_middleware (~> 0.9)
       fastimage (>= 2.1.0, < 3.0.0)
       gh_inspector (>= 1.1.2, < 2.0.0)
-      google-api-client (>= 0.13.1, < 0.14.0)
+      google-api-client (>= 0.21.2, < 0.22.0)
       highline (>= 1.7.2, < 2.0.0)
       json (< 3.0.0)
       mini_magick (~> 4.5.1)
@@ -26,7 +26,7 @@ GIT
       multipart-post (~> 2.0.0)
       plist (>= 3.1.0, < 4.0.0)
       public_suffix (~> 2.0.0)
-      rubyzip (>= 1.1.0, < 2.0.0)
+      rubyzip (>= 1.2.1, < 2.0.0)
       security (= 0.1.3)
       simctl (~> 1.6.3)
       slack-notifier (>= 2.0.0, < 3.0.0)
@@ -95,6 +95,12 @@ GEM
     commander-fastlane (4.4.6)
       highline (~> 1.7.2)
     concurrent-ruby (1.0.5)
+    credentials_manager (1.0.0)
+      colored
+      commander (>= 4.3.5)
+      fastlane (>= 2.0.0, < 3.0.0)
+      highline (>= 1.7.1)
+      security
     declarative (0.0.10)
     declarative-option (0.1.0)
     domain_name (0.5.20180417)
@@ -104,7 +110,7 @@ GEM
     equatable (0.5.0)
     escape (0.0.4)
     excon (0.62.0)
-    faraday (0.15.0)
+    faraday (0.15.2)
       multipart-post (>= 1.2, < 3)
     faraday-cookie_jar (0.0.6)
       faraday (>= 0.7.4)
@@ -115,9 +121,9 @@ GEM
     fourflusher (2.0.1)
     fuzzy_match (2.0.4)
     gh_inspector (1.1.3)
-    google-api-client (0.13.6)
+    google-api-client (0.21.2)
       addressable (~> 2.5, >= 2.5.1)
-      googleauth (~> 0.5)
+      googleauth (>= 0.5, < 0.7.0)
       httpclient (>= 2.8.1, < 3.0)
       mime-types (~> 3.0)
       representable (~> 3.0)
@@ -155,7 +161,7 @@ GEM
     multipart-post (2.0.0)
     nanaimo (0.2.5)
     nap (1.1.0)
-    naturally (2.1.0)
+    naturally (2.2.0)
     netrc (0.11.0)
     os (0.9.6)
     pastel (0.7.2)
@@ -198,9 +204,9 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
-    unicode-display_width (1.3.2)
+    unicode-display_width (1.4.0)
     word_wrap (1.0.0)
-    xcodeproj (1.5.8)
+    xcodeproj (1.5.9)
       CFPropertyList (>= 2.3.3, < 4.0)
       atomos (~> 0.1.2)
       claide (>= 1.0.2, < 2.0)
@@ -219,6 +225,7 @@ DEPENDENCIES
   cocoapods!
   colorize!
   commander!
+  credentials_manager!
   fastlane!
   java-properties!
   mini_magick!

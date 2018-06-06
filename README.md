@@ -35,17 +35,17 @@ _If you don't have Ruby installed already you must do so. This is somewhat a bit
 	1. ```curl -sSL https://rvm.io/mpapis.asc | gpg --import -```
 	1. ```\curl -sSL https://get.rvm.io | bash -s stable```
 	1. Now close your terminal window and reopen a new one. This reloads the shell so the ```rvm``` command now appears.
+1. Pull the generator code
+	1. ```git clone https://github.com/PushOCCRP/Push-Generator```
+	1. ```cd Push-Generator```
 1. Install Ruby
 	1. ```rvm install $(<.ruby-version)```
 	1. Wait awhile. Depending on your machine this can take quite a bit of time.	
-	1. rvm --default use $(<.ruby-version)```
+	1. ```rvm --default use $(<.ruby-version)```
 	1. Install the main bundler gem ```gem install bundler```
 	1. ```ruby -v``` should show a proper version of Ruby.
 1. Install ImageMagick
 	1. ```brew install imagemagick```
-1. Pull the generator code
-	1. ```git clone https://github.com/PushOCCRP/Push-Generator```
-	1. ```cd Push-Generator```
 1. Install all the gems needed
 	1. ```bundle install```
 1. If you've never opened XCode before, do so now, accept the terms of service and let the software install all the components.
@@ -92,9 +92,11 @@ git clone https://github.com/PushOCCRP/Push-iOS
 1. You may have to create a few folders
 
 ```
+	mkdir images
 	mkdir images/images-generated
 	mkdir images/images-generated/ios
 	mkdir ios
+	mkdir about-html
 	touch about-html/about_text-en-push.html
 ```
 
@@ -194,6 +196,25 @@ git config core.hooksPath hooks
 cd ../Push-Generator
 ```
 1. Create the app in the [Google Play Developer Console](https://play.google.com/apps/publish)
+1. We now need to create the account services permission file. This is documented pretty well [here](https://docs.fastlane.tools/getting-started/android/setup/) but we'll repeat the steps below as well
+	1. Open the [Google Play Console](https://play.google.com/apps/publish/)
+	1. Select Settings tab, followed by the API access tab
+	1. Click the Create New Project button
+	1. Click the Create Service Account button and follow the Google Developers Console link in the dialog
+	1. Click the Create Service account button at the top of the developers console screen
+	1. Provide a name for the service account
+	1. Click Select a role and choose Service Accounts > Service Account User
+	1. Check the Furnish a new private key checkbox
+	1. Select JSON as the Key type
+	1. Click "Save" to close the dialog
+	1. Make a note of the file name of the JSON file downloaded to your computer
+	1. Back on the Google Play developer console, click Done to close the dialog
+	1. Click on Grant Access for the newly added service account
+	1. Choose Release Manager from the Role dropdown
+	1. Click Add user to close the dialog
+	1. Copy the new file you just downloaded to the ```/google-services-account``` folder.
+	1. Rename the file to ```google-services-account.json```)
+	1. Add a suffix to your google-services-account.json file the same as you set in the settings.yml file earlier.
 1. Create the app in the [Firebase Console](https://console.firebase.google.com/?pli=1)
 1. After choosing your new app in the Firebase Console, you should have a page that says "Get started here." Click the "Add Firebase to your Android app"
 1. Enter the app id and name (make sure it's the same as in the push generator configuration file)
@@ -235,7 +256,7 @@ cd ../Push-Generator
 
 1. Save the credentials file.
 
-1. Go back to the command line and run the generater in bootstrap mode ```ruby push.rb -m android -a ../Push-Android```
+1. Go back to the command line and run the generater in bootstrap mode ```bundle exec ruby push.rb -m android -a ../Push-Android```
 
 All other folders shouldn't be touched unless you're trying to extend the system.
 

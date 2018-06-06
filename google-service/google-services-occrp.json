@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "772215886083",
+    "firebase_url": "https://occrp-7993b.firebaseio.com",
     "project_id": "occrp-7993b"
   },
   "client": [
@@ -11,7 +12,24 @@
           "package_name": "com.push.occrp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "772215886083-7n2pvmo5rbdsi54pf9tfa107fkbl0l07.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "772215886083-ka3iip8168dfu2e84bc4dnuppe93k9o7.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "772215886083-7mb2q5pmc19nlkergc0vi35mnq7t09db.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "772215886083-7mb2q5pmc19nlkergc0vi35mnq7t09db.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD0_UhVT-gm5xR6JMDlnd1OtiSNor49vBA"
@@ -29,7 +47,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     },
@@ -40,7 +58,24 @@
           "package_name": "com.push.occrpnews"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "772215886083-7n2pvmo5rbdsi54pf9tfa107fkbl0l07.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "772215886083-ka3iip8168dfu2e84bc4dnuppe93k9o7.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "772215886083-7mb2q5pmc19nlkergc0vi35mnq7t09db.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "772215886083-7mb2q5pmc19nlkergc0vi35mnq7t09db.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD0_UhVT-gm5xR6JMDlnd1OtiSNor49vBA"
@@ -55,7 +90,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
