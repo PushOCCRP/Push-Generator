@@ -1,4 +1,4 @@
-# Push Generator - v1.0.1
+# Push Generator - v1.2.0
 # ©Christopher Guess 2018
 require 'optparse'
 require 'byebug'
@@ -9,7 +9,6 @@ require 'fileutils'
 require 'find'
 require 'mini_magick'
 require 'pp'
-#require 'colorize'
 require 'commander/import'
 require 'open3'
 require 'java-properties'
@@ -19,7 +18,7 @@ require 'credentials_manager'
 require 'fileutils'
 
 program :name, 'Push App Generator'
-program :version, '1.1.0'
+program :version, '1.2.0'
 program :description, 'A script to automatically generate iOS and Android apps for the Push ecosystem'
 
 Options = Struct.new(:file_name, :upgrade, :production, :development, :snapshot, :beta, :mode, :android_path, :ios_path, :offline, :new, :certs, :force)
@@ -53,7 +52,7 @@ class Parser
       	args.production = true
       end
 
-      opts.on("-s", "--snapshot", "Flag for only making screenshots") do
+      opts.on("-s", "--snapshot", "Flag for only making screenshots BROKEN") do
       	args.snapshot = true
       end
 
@@ -108,7 +107,7 @@ class Generator
 
 	def self.generate options, version_number, build_number, mode, production=false, settings_only=false
 		#1.) Check if there's a file indicated in the call - DONE
-		#2.) If there's not a file, look for push-mobile.haml - DONE
+		#2.) If there's not a file, look for push-mobile.yml - DONE
 		file_content = load_file(options[:file_name], 'push-mobile.yml')
 		if(file_content.nil?)
 			return
@@ -1060,7 +1059,7 @@ def generateAndroid options, version_number = "1.0", build_number = "1"
 			p command
 			success = p system(command)
 		end
-		
+
 		if(success == false)
 			message = []
 			message << "Error uploading APK, if this is the very first build of a new app you have to upload the APK file manually".white.on_red

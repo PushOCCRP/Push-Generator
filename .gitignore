@@ -24,3 +24,6 @@ images/images-generated/*
 .DS_Store
 .DS_Store?
 .idea/*
+/credentials/*
+/google-services-account/*
+/google-services/*
